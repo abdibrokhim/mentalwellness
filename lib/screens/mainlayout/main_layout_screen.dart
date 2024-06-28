@@ -7,6 +7,7 @@ import 'package:mentalwellness/agent/search/card.dart';
 import 'package:mentalwellness/agent/search/search_bar.dart';
 import 'package:mentalwellness/components/custom_search.dart';
 import 'package:mentalwellness/screens/chat/chat_screen.dart';
+import 'package:mentalwellness/screens/chat/model/chat.model.dart';
 import 'package:mentalwellness/screens/chat/new_chat_screen.dart';
 import 'package:mentalwellness/screens/explore/explore_search.dart';
 import 'package:mentalwellness/screens/user/profile/profile.dart';
@@ -25,6 +26,8 @@ class MainLayout extends StatefulWidget {
 
 class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
+  
+  List<ChatModel> filteredData = [];
 
     // RoomsPage(),
   final List<Widget> _tabs = const [
@@ -62,6 +65,21 @@ class _MainLayoutState extends State<MainLayout> {
   void _onLoading() async{
     await Future.delayed(Duration(milliseconds: 1000));
     _refreshController.loadComplete();
+  }
+
+    void updateFilteredList(String filter) {
+    setState(() {
+      filteredData = StoreProvider.of<GlobalState>(context)
+          .state
+          .appState
+          .userState
+          .userChats
+          .where((value) {
+        final nameLower = value.title!.toLowerCase();
+        final filterLower = filter.toLowerCase();
+        return nameLower.contains(filterLower);
+      }).toList();
+    });
   }
 
 
@@ -118,10 +136,7 @@ class _MainLayoutState extends State<MainLayout> {
     children: [
       CustomSearchBar(
         hintText: "Search for ...",
-        onChanged: (value) {
-          // Perform search
-          print('search value ${value}');
-        },
+        onChanged: updateFilteredList
       ),
       const SizedBox(height: 32), // Added space before ListTiles
 
@@ -160,7 +175,7 @@ class _MainLayoutState extends State<MainLayout> {
                   child: 
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: userState.userChats.map((chats) => Padding(
+                    children: filteredData.map((chats) => Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: InkWell(
                         onTap: () {

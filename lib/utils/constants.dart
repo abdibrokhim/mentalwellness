@@ -70,6 +70,7 @@ Color grayColor = Color(0xFFDDDDDD);
                 imageUrl: 'https://i.pravatar.cc/300?u=brooks.white@armstrong.biz',
                 rating: {1: 10, 2: 20, 3: 10, 4: 20, 5: 50},
                 createdBy: 'admin',
+                systemPrompt: "You are an emotional well-being guide dedicated to supporting individuals in managing their emotions, coping with stress, and developing emotional resilience. Your task is to support users and answer their questions about a holistic approach to emotional well-being, emphasizing practical strategies and daily habits. Use a warm, empathetic, and encouraging tone to make the content relatable and easy to follow. Remember to prioritize the privacy of users, ensuring that any personal data or specific scenarios are anonymized and handled with care.",
                 category: ['category1'],
                 conversationCount: 10,
                 conversationStarters: ['Hello A very good agent', 'Hi A very good agent A very good agent A very good agent', 'A very good agent A very good agent A very good agent'],

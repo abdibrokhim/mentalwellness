@@ -7,9 +7,15 @@ import 'package:mentalwellness/agent/search/card.dart';
 import 'package:mentalwellness/agent/search/search_bar.dart';
 import 'package:mentalwellness/components/custom_search.dart';
 import 'package:mentalwellness/rooms.dart';
+import 'package:mentalwellness/screens/chat/chat_screen.dart';
+import 'package:mentalwellness/screens/chat/new_chat_screen.dart';
 import 'package:mentalwellness/screens/explore/explore_search.dart';
 import 'package:mentalwellness/screens/user/profile/profile.dart';
+import 'package:mentalwellness/screens/user/user_reducer.dart';
+import 'package:mentalwellness/store/app_store.dart';
 import 'package:mentalwellness/utils/constants.dart';
+import 'package:mentalwellness/utils/refreshable.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({Key? key}) : super(key: key);
@@ -33,6 +39,34 @@ class _MainLayoutState extends State<MainLayout> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    print('init state');
+  }
+
+  void reFetchData()  {
+    print('reFetchData');
+
+      StoreProvider.of<GlobalState>(context).dispatch(GetUserChatsAction(store.state.appState.userState.user!.uid));
+      print('user chats ${StoreProvider.of<GlobalState>(context).state.appState.userState.userChats.length}');
+  }
+
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async{
+    await Future.delayed(Duration(milliseconds: 1000));
+    reFetchData();
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async{
+    await Future.delayed(Duration(milliseconds: 1000));
+    _refreshController.loadComplete();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
 
     final AgentModel agent = AgentModel(
@@ -44,12 +78,22 @@ class _MainLayoutState extends State<MainLayout> {
                 createdBy: 'admin',
                 category: ['category1'],
                 conversationCount: 10,
+                systemPrompt: "You are an emotional well-being guide dedicated to supporting individuals in managing their emotions, coping with stress, and developing emotional resilience. Your task is to support users and answer their questions about a holistic approach to emotional well-being, emphasizing practical strategies and daily habits. Use a warm, empathetic, and encouraging tone to make the content relatable and easy to follow. Remember to prioritize the privacy of users, ensuring that any personal data or specific scenarios are anonymized and handled with care.",
                 conversationStarters: ['Hello A very good agent', 'Hi A very good agent A very good agent A very good agent', 'A very good agent A very good agent A very good agent'],
                 skills: ['skill1', 'skill2'],
                 createdAt: DateTime.now(),
               );
 
-    return Scaffold(
+    return StoreConnector<GlobalState, UserState>(
+              onInit: (store) {
+                print('onInit');
+
+                store.dispatch(GetUserChatsAction(store.state.appState.userState.user!.uid));
+              },
+              converter: (store) => store.state.appState.userState,
+              builder: (context, userState) {
+                return
+    Scaffold(
       appBar: AppBar(
         surfaceTintColor: const Color.fromARGB(255, 255, 255, 255),
         iconTheme: IconThemeData(color: const Color.fromARGB(255, 0, 0, 0)),
@@ -63,6 +107,7 @@ class _MainLayoutState extends State<MainLayout> {
         backgroundColor: Colors.white,
       ),
       drawer: Drawer(
+        clipBehavior: Clip.none,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topRight: Radius.circular(0),
@@ -78,8 +123,13 @@ class _MainLayoutState extends State<MainLayout> {
         Padding(
           padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 60.0, bottom: 0.0), // Added padding to the main content
           child:
+          Refreshable(
+            refreshController: _refreshController,
+            onRefresh: _onRefresh,
+            onLoading: _onLoading,
+            child: 
   ListView(
-    physics: const NeverScrollableScrollPhysics(),
+    // physics: const NeverScrollableScrollPhysics(),
     padding: EdgeInsets.zero,
     children: [
       CustomSearchBar(
@@ -112,12 +162,35 @@ class _MainLayoutState extends State<MainLayout> {
             ),
       
       const SizedBox(height: 32), // Added space before ListTiles
+      Divider(color: const Color.fromARGB(255, 0, 0, 0), thickness: 1, height: 1, indent: 0, endIndent: 0),
+      const SizedBox(height: 32), // Added space before ListTiles
 
       Text('Recent chats', overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 14.0, color: Color.fromARGB(255, 0, 0, 0)),),
       const SizedBox(height: 24), // Added space before ListTiles
       // list recent chats below
-      Text('no chats', overflow: TextOverflow.ellipsis, maxLines: 1, style: const TextStyle(fontSize: 18.0, color: Color.fromARGB(255, 0, 0, 0)),),
-      
+      Row(
+              children: [
+                Expanded(
+                  child: 
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: userState.userChats.map((chats) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: InkWell(
+                        onTap: () {
+                          store.dispatch(OnSelectChatAction(chats));
+                          // print('chat selected ${userState.currentChat!.title}');
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatScreen()));
+                        },
+                        child: Text(chats.title, style: const TextStyle(fontSize: 18.0, color: Color.fromARGB(255, 0, 0, 0)),),
+                      )
+                    )).toList(),
+                ),
+                ),
+              ],
+            ),
+      const SizedBox(height: 32), // Added space before ListTiles
+      Divider(color: const Color.fromARGB(255, 0, 0, 0), thickness: 1, height: 1, indent: 0, endIndent: 0),
       const SizedBox(height: 32), // Added space before ListTiles
       ListTile(
         leading: const Icon(Icons.explore_rounded, color: Color.fromARGB(255, 0, 0, 0), size: 26,),
@@ -159,6 +232,7 @@ class _MainLayoutState extends State<MainLayout> {
   ),
   ),
   ),
+  ),
   
 const SizedBox(height: 32),
   Padding(padding: const EdgeInsets.only(bottom: 20.0), // Added padding to version info
@@ -177,5 +251,7 @@ const SizedBox(height: 32),
 
       body: _tabs[_selectedIndex],
     );
+  }
+);
   }
 }

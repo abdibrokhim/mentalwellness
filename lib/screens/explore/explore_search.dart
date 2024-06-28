@@ -10,6 +10,7 @@ import 'package:mentalwellness/agent/search/bubble_wrapper.dart';
 import 'package:mentalwellness/agent/search/card.dart';
 import 'package:mentalwellness/agent/search/search_bar.dart';
 import 'package:mentalwellness/screens/chat/chat_screen.dart';
+import 'package:mentalwellness/screens/chat/model/chat.model.dart';
 import 'package:mentalwellness/screens/chat/new_chat_screen.dart';
 import 'package:mentalwellness/screens/user/user_reducer.dart';
 import 'package:mentalwellness/store/app_logs.dart';
@@ -128,6 +129,21 @@ Center(
                     agent: agent,
                     onStartConversation: () { 
                       print('Start conversation');
+                      ChatMessageModel initMsg = ChatMessageModel(
+                        role: 'system',
+                        content: agent.systemPrompt,
+                      );
+                      ChatModel chat = ChatModel(
+                        uid: "1",
+                        title: "New Chat",
+                        agentId: agent.uid,
+                        userId: state.user!.uid,
+                        messages: [initMsg],
+                      );
+                      store.dispatch(CreateNewChatAction(chat));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatScreen(
+                        conversationStarters: agent.conversationStarters,
+                      )));
                     },
                   )));
                 },

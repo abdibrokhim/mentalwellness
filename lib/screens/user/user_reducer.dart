@@ -1,4 +1,5 @@
 import 'package:mentalwellness/agent/model/agent.model.dart';
+import 'package:mentalwellness/screens/chat/model/chat.model.dart';
 import 'package:redux/redux.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -15,6 +16,15 @@ class UserState {
   final User? user;
   final List<AgentModel> agentsList;
   final bool isFetchingAgentsList;
+  final bool isGettingAnswer;
+  final List<ChatMessageModel> messages;
+  final String answer;
+  final String selectedAgentId;
+  final bool isFetchingUserChats;
+  final List<ChatModel> userChats;
+  final bool isAddingMessageToChat;
+  final ChatModel? currentChat;
+  final bool isCreatingNewChat;
 
   UserState({
     this.isLoading = false,
@@ -27,6 +37,15 @@ class UserState {
     this.user,
     this.agentsList = const [],
     this.isFetchingAgentsList = false,
+    this.isGettingAnswer = false,
+    this.messages = const [],
+    this.answer = '',
+    this.selectedAgentId = '',
+    this.isFetchingUserChats = false,
+    this.userChats = const [],
+    this.isAddingMessageToChat = false,
+    this.currentChat,
+    this.isCreatingNewChat = false,
   });
 
   UserState copyWith({
@@ -40,6 +59,15 @@ class UserState {
     User? user,
     List<AgentModel>? agentsList,
     bool? isFetchingAgentsList,
+    bool? isGettingAnswer,
+    List<ChatMessageModel>? messages,
+    String? answer,
+    String? selectedAgentId,
+    bool? isFetchingUserChats,
+    List<ChatModel>? userChats,
+    bool? isAddingMessageToChat,
+    ChatModel? currentChat,
+    bool? isCreatingNewChat,
   }) {
     return UserState(
       isLoading: isLoading ?? this.isLoading,
@@ -52,6 +80,15 @@ class UserState {
       user: user ?? this.user,
       agentsList: agentsList ?? this.agentsList,
       isFetchingAgentsList: isFetchingAgentsList ?? this.isFetchingAgentsList,
+      isGettingAnswer: isGettingAnswer ?? this.isGettingAnswer,
+      messages: messages ?? this.messages,
+      answer: answer ?? this.answer,
+      selectedAgentId: selectedAgentId ?? this.selectedAgentId,
+      isFetchingUserChats: isFetchingUserChats ?? this.isFetchingUserChats,
+      userChats: userChats ?? this.userChats,
+      isAddingMessageToChat: isAddingMessageToChat ?? this.isAddingMessageToChat,
+      currentChat: currentChat ?? this.currentChat,
+      isCreatingNewChat: isCreatingNewChat ?? this.isCreatingNewChat,
     );
   }
 }
@@ -202,6 +239,147 @@ UserState fetchAgentsListSuccessReducer(UserState state, FetchAgentsListSuccessA
 }
 
 
+// ========== GetAnswerAction ========== //
+
+class GetAnswerAction {
+  final List<String> messages;
+
+  GetAnswerAction(this.messages);
+}
+
+UserState getAnswerReducer(UserState state, GetAnswerAction action) {
+  return state.copyWith(isGettingAnswer: true);
+}
+
+// ========== GetAnswerSuccessAction ========== //
+
+class GetAnswerSuccessAction {
+  final String content;
+
+  GetAnswerSuccessAction(this.content);
+}
+
+UserState getAnswerSuccessReducer(UserState state, GetAnswerSuccessAction action) {
+  return state.copyWith(
+    isGettingAnswer: false,
+    answer: action.content,
+  );
+}
+
+
+// select agent
+class SelectAgentAction {
+  final String agentId;
+
+  SelectAgentAction(this.agentId);
+}
+
+UserState selectAgentReducer(UserState state, SelectAgentAction action) {
+  return state.copyWith(
+    selectedAgentId: action.agentId,
+  );
+}
+
+// GetUserChatsAction
+// GetUserChatsSuccessAction
+
+// get user chats
+class GetUserChatsAction {
+  final String userId;
+
+  GetUserChatsAction(this.userId);
+}
+
+UserState getUserChatsReducer(UserState state, GetUserChatsAction action) {
+  return state.copyWith(isFetchingUserChats: true);
+}
+
+class GetUserChatsSuccessAction {
+  final List<ChatModel> userChats;
+
+  GetUserChatsSuccessAction(this.userChats);
+}
+
+UserState getUserChatsSuccessReducer(UserState state, GetUserChatsSuccessAction action) {
+  return state.copyWith(
+    isFetchingUserChats: false,
+    userChats: action.userChats,
+  );
+}
+
+// add new message to the chat
+
+
+class AddMessageToChatAction {
+  final String chatId;
+  final ChatMessageModel newMessage;
+
+  AddMessageToChatAction(this.chatId, this.newMessage);
+}
+
+UserState addMessageToChatReducer(UserState state, AddMessageToChatAction action) {
+  return state.copyWith(isAddingMessageToChat: true, currentChat: state.currentChat!.copyWith(messages: [...state.currentChat!.messages, action.newMessage]));
+}
+
+class AddMessageToChatSuccessAction {
+  final List<ChatMessageModel> messages;
+
+  AddMessageToChatSuccessAction(this.messages);
+}
+
+UserState addMessageToChatSuccessReducer(UserState state, AddMessageToChatSuccessAction action) {
+  return state.copyWith(
+    isAddingMessageToChat: false,
+    currentChat: state.currentChat!.copyWith(messages: action.messages),
+  );
+}
+
+
+
+class OnSelectChatAction {
+  final ChatModel chat;
+
+  OnSelectChatAction(this.chat);
+}
+
+UserState onSelectChatReducer(UserState state, OnSelectChatAction action) {
+  return state.copyWith(
+    currentChat: action.chat,
+  );
+}
+
+// create new chat
+// CreateNewChatAction
+// CreateNewChatSuccessAction
+
+
+class CreateNewChatAction {
+  final ChatModel chat;
+
+  CreateNewChatAction(this.chat);
+}
+
+UserState createNewChatReducer(UserState state, CreateNewChatAction action) {
+  return state.copyWith(isCreatingNewChat: true);
+}
+
+class CreateNewChatSuccessAction {
+  final ChatModel chat;
+
+  CreateNewChatSuccessAction(this.chat);
+}
+
+UserState createNewChatSuccessReducer(UserState state, CreateNewChatSuccessAction action) {
+  return state.copyWith(
+    isCreatingNewChat: false,
+    currentChat: action.chat,
+  );
+}
+
+
+
+
+
 // ========== simulations ========== //
 
 
@@ -251,4 +429,15 @@ Reducer<UserState> userReducer = combineReducers<UserState>([
   TypedReducer<UserState, ClearGenericErrorAction>(clearGenericErrorReducer),
   TypedReducer<UserState, FetchAgentsListAction>(fetchAgentsListReducer),
   TypedReducer<UserState, FetchAgentsListSuccessAction>(fetchAgentsListSuccessReducer),
+  TypedReducer<UserState, GetAnswerAction>(getAnswerReducer),
+  TypedReducer<UserState, GetAnswerSuccessAction>(getAnswerSuccessReducer),
+  TypedReducer<UserState, SelectAgentAction>(selectAgentReducer),
+  TypedReducer<UserState, GetUserChatsAction>(getUserChatsReducer),
+  TypedReducer<UserState, GetUserChatsSuccessAction>(getUserChatsSuccessReducer),
+  TypedReducer<UserState, AddMessageToChatAction>(addMessageToChatReducer),
+  TypedReducer<UserState, AddMessageToChatSuccessAction>(addMessageToChatSuccessReducer),
+  TypedReducer<UserState, OnSelectChatAction>(onSelectChatReducer),
+  TypedReducer<UserState, CreateNewChatAction>(createNewChatReducer),
+  TypedReducer<UserState, CreateNewChatSuccessAction>(createNewChatSuccessReducer),
+
 ]);

@@ -19,6 +19,7 @@ class AgentModel with _$AgentModel {
     required String createdBy,
     required List<String> category,
     required int conversationCount,
+    required String systemPrompt,
     required List<String> conversationStarters,
     required List<String> skills,
     required DateTime createdAt,

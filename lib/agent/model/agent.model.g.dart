@@ -19,6 +19,7 @@ _$AgentModelImpl _$$AgentModelImplFromJson(Map<String, dynamic> json) =>
       category:
           (json['category'] as List<dynamic>).map((e) => e as String).toList(),
       conversationCount: (json['conversationCount'] as num).toInt(),
+      systemPrompt: json['systemPrompt'] as String,
       conversationStarters: (json['conversationStarters'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
@@ -37,6 +38,7 @@ Map<String, dynamic> _$$AgentModelImplToJson(_$AgentModelImpl instance) =>
       'createdBy': instance.createdBy,
       'category': instance.category,
       'conversationCount': instance.conversationCount,
+      'systemPrompt': instance.systemPrompt,
       'conversationStarters': instance.conversationStarters,
       'skills': instance.skills,
       'createdAt': instance.createdAt.toIso8601String(),

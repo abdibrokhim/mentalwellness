@@ -28,6 +28,7 @@ mixin _$AgentModel {
   String get createdBy => throw _privateConstructorUsedError;
   List<String> get category => throw _privateConstructorUsedError;
   int get conversationCount => throw _privateConstructorUsedError;
+  String get systemPrompt => throw _privateConstructorUsedError;
   List<String> get conversationStarters => throw _privateConstructorUsedError;
   List<String> get skills => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
@@ -53,6 +54,7 @@ abstract class $AgentModelCopyWith<$Res> {
       String createdBy,
       List<String> category,
       int conversationCount,
+      String systemPrompt,
       List<String> conversationStarters,
       List<String> skills,
       DateTime createdAt});
@@ -79,6 +81,7 @@ class _$AgentModelCopyWithImpl<$Res, $Val extends AgentModel>
     Object? createdBy = null,
     Object? category = null,
     Object? conversationCount = null,
+    Object? systemPrompt = null,
     Object? conversationStarters = null,
     Object? skills = null,
     Object? createdAt = null,
@@ -116,6 +119,10 @@ class _$AgentModelCopyWithImpl<$Res, $Val extends AgentModel>
           ? _value.conversationCount
           : conversationCount // ignore: cast_nullable_to_non_nullable
               as int,
+      systemPrompt: null == systemPrompt
+          ? _value.systemPrompt
+          : systemPrompt // ignore: cast_nullable_to_non_nullable
+              as String,
       conversationStarters: null == conversationStarters
           ? _value.conversationStarters
           : conversationStarters // ignore: cast_nullable_to_non_nullable
@@ -149,6 +156,7 @@ abstract class _$$AgentModelImplCopyWith<$Res>
       String createdBy,
       List<String> category,
       int conversationCount,
+      String systemPrompt,
       List<String> conversationStarters,
       List<String> skills,
       DateTime createdAt});
@@ -173,6 +181,7 @@ class __$$AgentModelImplCopyWithImpl<$Res>
     Object? createdBy = null,
     Object? category = null,
     Object? conversationCount = null,
+    Object? systemPrompt = null,
     Object? conversationStarters = null,
     Object? skills = null,
     Object? createdAt = null,
@@ -210,6 +219,10 @@ class __$$AgentModelImplCopyWithImpl<$Res>
           ? _value.conversationCount
           : conversationCount // ignore: cast_nullable_to_non_nullable
               as int,
+      systemPrompt: null == systemPrompt
+          ? _value.systemPrompt
+          : systemPrompt // ignore: cast_nullable_to_non_nullable
+              as String,
       conversationStarters: null == conversationStarters
           ? _value._conversationStarters
           : conversationStarters // ignore: cast_nullable_to_non_nullable
@@ -238,6 +251,7 @@ class _$AgentModelImpl with DiagnosticableTreeMixin implements _AgentModel {
       required this.createdBy,
       required final List<String> category,
       required this.conversationCount,
+      required this.systemPrompt,
       required final List<String> conversationStarters,
       required final List<String> skills,
       required this.createdAt})
@@ -277,6 +291,8 @@ class _$AgentModelImpl with DiagnosticableTreeMixin implements _AgentModel {
 
   @override
   final int conversationCount;
+  @override
+  final String systemPrompt;
   final List<String> _conversationStarters;
   @override
   List<String> get conversationStarters {
@@ -299,7 +315,7 @@ class _$AgentModelImpl with DiagnosticableTreeMixin implements _AgentModel {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AgentModel(uid: $uid, name: $name, description: $description, imageUrl: $imageUrl, rating: $rating, createdBy: $createdBy, category: $category, conversationCount: $conversationCount, conversationStarters: $conversationStarters, skills: $skills, createdAt: $createdAt)';
+    return 'AgentModel(uid: $uid, name: $name, description: $description, imageUrl: $imageUrl, rating: $rating, createdBy: $createdBy, category: $category, conversationCount: $conversationCount, systemPrompt: $systemPrompt, conversationStarters: $conversationStarters, skills: $skills, createdAt: $createdAt)';
   }
 
   @override
@@ -315,6 +331,7 @@ class _$AgentModelImpl with DiagnosticableTreeMixin implements _AgentModel {
       ..add(DiagnosticsProperty('createdBy', createdBy))
       ..add(DiagnosticsProperty('category', category))
       ..add(DiagnosticsProperty('conversationCount', conversationCount))
+      ..add(DiagnosticsProperty('systemPrompt', systemPrompt))
       ..add(DiagnosticsProperty('conversationStarters', conversationStarters))
       ..add(DiagnosticsProperty('skills', skills))
       ..add(DiagnosticsProperty('createdAt', createdAt));
@@ -337,6 +354,8 @@ class _$AgentModelImpl with DiagnosticableTreeMixin implements _AgentModel {
             const DeepCollectionEquality().equals(other._category, _category) &&
             (identical(other.conversationCount, conversationCount) ||
                 other.conversationCount == conversationCount) &&
+            (identical(other.systemPrompt, systemPrompt) ||
+                other.systemPrompt == systemPrompt) &&
             const DeepCollectionEquality()
                 .equals(other._conversationStarters, _conversationStarters) &&
             const DeepCollectionEquality().equals(other._skills, _skills) &&
@@ -356,6 +375,7 @@ class _$AgentModelImpl with DiagnosticableTreeMixin implements _AgentModel {
       createdBy,
       const DeepCollectionEquality().hash(_category),
       conversationCount,
+      systemPrompt,
       const DeepCollectionEquality().hash(_conversationStarters),
       const DeepCollectionEquality().hash(_skills),
       createdAt);
@@ -384,6 +404,7 @@ abstract class _AgentModel implements AgentModel {
       required final String createdBy,
       required final List<String> category,
       required final int conversationCount,
+      required final String systemPrompt,
       required final List<String> conversationStarters,
       required final List<String> skills,
       required final DateTime createdAt}) = _$AgentModelImpl;
@@ -407,6 +428,8 @@ abstract class _AgentModel implements AgentModel {
   List<String> get category;
   @override
   int get conversationCount;
+  @override
+  String get systemPrompt;
   @override
   List<String> get conversationStarters;
   @override

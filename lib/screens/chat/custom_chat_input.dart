@@ -4,11 +4,13 @@ class CustomChatInput extends StatefulWidget {
   final String hintText;
   final ValueChanged<String> onChanged;
   final bool disable;
+  final String? initialMessage;
 
   const CustomChatInput({
     required this.hintText,
     required this.onChanged,
     this.disable = false,
+    this.initialMessage,
     super.key,
     });
 
@@ -22,6 +24,9 @@ class _CustomChatInputState extends State<CustomChatInput> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialMessage != null) {
+      _searchController.text = widget.initialMessage!;
+    }
     _searchController.addListener(() {
       widget.onChanged(_searchController.text);
     });

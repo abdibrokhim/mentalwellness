@@ -127,6 +127,25 @@ Center(
                 onOpenProfile: (){ 
                   Navigator.of(context).push(MaterialPageRoute(builder: (context) => AgentProfile(
                     agent: agent,
+                    onConversationStart: (String message) {
+                      print('Start conversation with message: $message');
+                      ChatMessageModel initMsg = ChatMessageModel(
+                        role: 'system',
+                        content: agent.systemPrompt,
+                      );
+                      ChatModel chat = ChatModel(
+                        uid: "1",
+                        title: "New Chat",
+                        agentId: agent.uid,
+                        userId: state.user!.uid,
+                        messages: [initMsg],
+                      );
+                      store.dispatch(CreateNewChatAction(chat));
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatScreen(
+                        initialMessage: message,
+                        conversationStarters: agent.conversationStarters,
+                      )));
+                    },
                     onStartConversation: () { 
                       print('Start conversation');
                       ChatMessageModel initMsg = ChatMessageModel(

@@ -30,6 +30,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     if (widget.initialMessage != null) {
+      print('initial message: ${widget.initialMessage}');
       _controller.text = widget.initialMessage!;
     }
     if (store.state.appState.userState.currentChat == null) {
@@ -261,6 +262,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     const SizedBox(width: 8.0),
                     Expanded(
                       child: CustomChatInput(
+                        initialMessage: _controller.text,
                         disable: userState.isAddingMessageToChat,
                         hintText: "Message...",
                         onChanged: (value) {

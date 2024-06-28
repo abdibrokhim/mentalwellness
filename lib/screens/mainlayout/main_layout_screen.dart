@@ -6,7 +6,6 @@ import 'package:mentalwellness/agent/profile/profile.dart';
 import 'package:mentalwellness/agent/search/card.dart';
 import 'package:mentalwellness/agent/search/search_bar.dart';
 import 'package:mentalwellness/components/custom_search.dart';
-import 'package:mentalwellness/rooms.dart';
 import 'package:mentalwellness/screens/chat/chat_screen.dart';
 import 'package:mentalwellness/screens/chat/new_chat_screen.dart';
 import 'package:mentalwellness/screens/explore/explore_search.dart';
@@ -69,21 +68,6 @@ class _MainLayoutState extends State<MainLayout> {
   @override
   Widget build(BuildContext context) {
 
-    final AgentModel agent = AgentModel(
-                uid: '1',
-                name: 'John Doe',
-                description: 'A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent', 
-                imageUrl: 'https://i.pravatar.cc/300?u=brooks.white@armstrong.biz',
-                rating: {1: 10, 2: 20, 3: 10, 4: 20, 5: 50},
-                createdBy: 'admin',
-                category: ['category1'],
-                conversationCount: 10,
-                systemPrompt: "You are an emotional well-being guide dedicated to supporting individuals in managing their emotions, coping with stress, and developing emotional resilience. Your task is to support users and answer their questions about a holistic approach to emotional well-being, emphasizing practical strategies and daily habits. Use a warm, empathetic, and encouraging tone to make the content relatable and easy to follow. Remember to prioritize the privacy of users, ensuring that any personal data or specific scenarios are anonymized and handled with care.",
-                conversationStarters: ['Hello A very good agent', 'Hi A very good agent A very good agent A very good agent', 'A very good agent A very good agent A very good agent'],
-                skills: ['skill1', 'skill2'],
-                createdAt: DateTime.now(),
-              );
-
     return StoreConnector<GlobalState, UserState>(
               onInit: (store) {
                 print('onInit');
@@ -142,20 +126,22 @@ class _MainLayoutState extends State<MainLayout> {
       const SizedBox(height: 32), // Added space before ListTiles
 
       AgentBubbleCard(
-              agent: agent,
+              agent: universalAgent,
               onOpenProfile: (){ 
                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => AgentProfile(
-                  agent: agent,
+                  agent: universalAgent,
+                  onConversationStart: (String message){ print('Start conversation with ${message}'); },
                   onStartConversation: (){ print('Start conversation'); },
                 )));
               },
             ),
             const SizedBox(height: 24), // Added space before ListTiles
       AgentBubbleCard(
-              agent: agent,
+              agent: universalAgent,
               onOpenProfile: (){ 
                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => AgentProfile(
-                  agent: agent,
+                  agent: universalAgent,
+                  onConversationStart: (String message){ print('Start conversation with ${message}'); },
                   onStartConversation: (){ print('Start conversation'); },
                 )));
               },

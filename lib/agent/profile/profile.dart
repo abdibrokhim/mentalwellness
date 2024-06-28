@@ -8,10 +8,12 @@ import '../model/agent.model.dart';
 class AgentProfile extends StatelessWidget {
   final AgentModel agent;
   final VoidCallback onStartConversation;
+  final Function(String) onConversationStart;
 
   const AgentProfile({
     required this.agent, 
     required this.onStartConversation,
+    required this.onConversationStart,
     super.key
   });
 
@@ -116,7 +118,10 @@ class AgentProfile extends StatelessWidget {
                       child: Chip(
                         backgroundColor: Colors.white,
                         surfaceTintColor: Colors.white,
-                        label: Text(starter, style: const TextStyle(fontSize: 16.0, color: Color.fromARGB(255, 0, 0, 0)),),
+                        label: GestureDetector(
+                          onTap: () => onConversationStart(starter),
+                          child: Text(starter, style: const TextStyle(fontSize: 16.0, color: Color.fromARGB(255, 0, 0, 0)),),
+                        ),
                       ),
                     )).toList(),
                   ),

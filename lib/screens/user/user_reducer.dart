@@ -521,7 +521,27 @@ UserState updateRatingSuccessReducer(UserState state, UpdateRatingSuccessAction 
   return state.copyWith();
 }
 
+// UpdateConversationTitleAction
+// UpdateConversationTitleSuccessAction
 
+class UpdateConversationTitleAction {
+  final String chatId;
+  final String title;
+
+  UpdateConversationTitleAction(this.chatId, this.title);
+}
+
+UserState updateConversationTitleReducer(UserState state, UpdateConversationTitleAction action) {
+  return state.copyWith();
+}
+
+class UpdateConversationTitleSuccessAction {
+  UpdateConversationTitleSuccessAction();
+}
+
+UserState updateConversationTitleSuccessReducer(UserState state, UpdateConversationTitleSuccessAction action) {
+  return state.copyWith();
+}
 
 
 // ========== simulations ========== //
@@ -593,4 +613,6 @@ Reducer<UserState> userReducer = combineReducers<UserState>([
   TypedReducer<UserState, UpdateConversationCountSuccessAction>(updateConversationCountSuccessReducer),
   TypedReducer<UserState, UpdateRatingAction>(updateRatingReducer),
   TypedReducer<UserState, UpdateRatingSuccessAction>(updateRatingSuccessReducer),
+  TypedReducer<UserState, UpdateConversationTitleAction>(updateConversationTitleReducer),
+  TypedReducer<UserState, UpdateConversationTitleSuccessAction>(updateConversationTitleSuccessReducer),
 ]);

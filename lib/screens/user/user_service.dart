@@ -413,4 +413,19 @@ static Future<List<AgentModel>> getMostRatedAgent(int count) async {
       return Future.error('Error while updating rating');
     }
   }
+
+  static Future<void> updateConversationTitle(String chatId, String title) {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+
+    try {
+      AppLog.log().i('Updating conversation title for chat $chatId');
+
+      DocumentReference chatDocRef = db.collection('chats').doc(chatId);
+
+      return chatDocRef.update({'title': title});
+    } catch (e) {
+      AppLog.log().e('Error while updating conversation title: $e');
+      return Future.error('Error while updating conversation title');
+    }
+  }
 }

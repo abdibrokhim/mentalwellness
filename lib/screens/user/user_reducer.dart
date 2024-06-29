@@ -27,6 +27,8 @@ class UserState {
   final bool isCreatingNewChat;
   final List<AgentModel> mostRatedAgents;
   final bool isFetchingMostRatedAgents;
+  final bool isFetchingAgentById;
+  final AgentModel? currentAgent;
 
   UserState({
     this.isLoading = false,
@@ -50,6 +52,8 @@ class UserState {
     this.isCreatingNewChat = false,
     this.mostRatedAgents = const [],
     this.isFetchingMostRatedAgents = false,
+    this.isFetchingAgentById = false,
+    this.currentAgent,
   });
 
   UserState copyWith({
@@ -74,6 +78,8 @@ class UserState {
     bool? isCreatingNewChat,
     List<AgentModel>? mostRatedAgents,
     bool? isFetchingMostRatedAgents,
+    bool? isFetchingAgentById,
+    AgentModel? currentAgent,
   }) {
     return UserState(
       isLoading: isLoading ?? this.isLoading,
@@ -97,6 +103,8 @@ class UserState {
       isCreatingNewChat: isCreatingNewChat ?? this.isCreatingNewChat,
       mostRatedAgents: mostRatedAgents ?? this.mostRatedAgents,
       isFetchingMostRatedAgents: isFetchingMostRatedAgents ?? this.isFetchingMostRatedAgents,
+      isFetchingAgentById: isFetchingAgentById ?? this.isFetchingAgentById,
+      currentAgent: currentAgent ?? this.currentAgent,
     );
   }
 }
@@ -412,6 +420,31 @@ UserState getMostRatedAgentSuccessReducer(UserState state, GetMostRatedAgentSucc
   );
 }
 
+// GetAgentByIdAction
+// GetAgentByIdSuccessAction
+
+class GetAgentByIdAction {
+  final String agentId;
+
+  GetAgentByIdAction(this.agentId);
+}
+
+UserState getAgentByIdReducer(UserState state, GetAgentByIdAction action) {
+  return state.copyWith(isFetchingAgentById: true);
+}
+
+class GetAgentByIdSuccessAction {
+  final AgentModel agent;
+
+  GetAgentByIdSuccessAction(this.agent);
+}
+
+UserState getAgentByIdSuccessReducer(UserState state, GetAgentByIdSuccessAction action) {
+  return state.copyWith(
+    isFetchingAgentById: false,
+    currentAgent: action.agent,
+  );
+}
 
 
 
@@ -477,5 +510,7 @@ Reducer<UserState> userReducer = combineReducers<UserState>([
   TypedReducer<UserState, CreateNewChatSuccessAction>(createNewChatSuccessReducer),
   TypedReducer<UserState, GetMostRatedAgentAction>(getMostRatedAgentReducer),
   TypedReducer<UserState, GetMostRatedAgentSuccessAction>(getMostRatedAgentSuccessReducer),
-
+  TypedReducer<UserState, GetAgentByIdAction>(getAgentByIdReducer),
+  TypedReducer<UserState, GetAgentByIdSuccessAction>(getAgentByIdSuccessReducer),
+  
 ]);

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:mentalwellness/agent/search/card.dart';
 import 'package:mentalwellness/screens/chat/custom_chat_input.dart';
 import 'package:mentalwellness/screens/chat/model/chat.model.dart';
 import 'package:mentalwellness/screens/user/user_reducer.dart';
 import 'package:mentalwellness/store/app_store.dart';
 import 'package:mentalwellness/utils/constants.dart';
+import 'package:mentalwellness/utils/toast.dart';
 
 class ChatScreen extends StatefulWidget {
   final String? initialMessage;
@@ -109,11 +111,13 @@ class _ChatScreenState extends State<ChatScreen> {
   void _handleImageSelection() {
     // Implement image selection
     print('Image selected');
+    showToast(message: 'This feature is under developmenet', bgColor: getColor(AppColors.info));
   }
 
   void _handleFileSelection() {
     // Implement file selection
     print('File selected');
+    showToast(message: 'This feature is under developmenet', bgColor: getColor(AppColors.info));
   }
 
   void _handleSendPressed() {
@@ -144,7 +148,13 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        title: const Text('Chat'),
+        title: AgentBubbleCardSec(
+          agent: store.state.appState.userState.currentAgent!,
+          onOpenProfile: () {
+            // we will not open profile because user already came to the chat screen from the agent profile
+            print('Open profile');
+          }
+        )
       ),
       body: StoreConnector<GlobalState, UserState>(
         onInit: (store) async {},

@@ -14,7 +14,14 @@ class BubbleCardWrapper extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ...children,
+          ...List.generate(children.length, (index) {
+            return Column(
+              children: [
+                children[index],
+                if (index < children.length - 1) const SizedBox(height: 16.0),
+              ],
+            );
+          }),
         ],
       ),
     );

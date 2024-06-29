@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:mentalwellness/agent/model/agent.model.dart';
 import 'package:mentalwellness/agent/profile/profile.dart';
+import 'package:mentalwellness/agent/search/bubble_wrapper.dart';
 import 'package:mentalwellness/agent/search/card.dart';
 import 'package:mentalwellness/agent/search/search_bar.dart';
 import 'package:mentalwellness/components/custom_search.dart';
@@ -15,6 +18,7 @@ import 'package:mentalwellness/screens/user/user_reducer.dart';
 import 'package:mentalwellness/store/app_store.dart';
 import 'package:mentalwellness/utils/constants.dart';
 import 'package:mentalwellness/utils/refreshable.dart';
+import 'package:mentalwellness/utils/shared.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 class MainLayout extends StatefulWidget {
@@ -94,7 +98,8 @@ class _MainLayoutState extends State<MainLayout> {
                 print('onInit');
 
                 store.dispatch(GetUserChatsAction(store.state.appState.userState.user!.uid));
-                StoreProvider.of<GlobalState>(context).dispatch(GetMostRatedAgentAction(2));
+               
+                store.dispatch(GetMostRatedAgentAction(2));
               },
               converter: (store) => store.state.appState.userState,
               builder: (context, userState) {
@@ -143,125 +148,185 @@ const SizedBox(height: 32), // Added space before ListTiles
                 onLoading: _onLoading,
                 child: 
       ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          ...userState.mostRatedAgents.map((agent) =>
-
-            AgentBubbleCard(
-                  agent: agent,
-                  onOpenProfile: (){ 
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => AgentProfile(
-                      agent: agent,
-                      onConversationStart: (String message) {
-                        print('Start conversation with message: $message');
-                        ChatMessageModel initMsg = ChatMessageModel(
-                          role: 'system',
-                          content: agent.systemPrompt,
-                        );
-                        ChatModel chat = ChatModel(
-                          uid: "1",
-                          title: "New Chat",
-                          agentId: agent.uid,
-                          userId: userState.user!.uid,
-                          messages: [initMsg],
-                        );
-                        store.dispatch(CreateNewChatAction(chat));
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatScreen(
-                          initialMessage: message,
-                          conversationStarters: agent.conversationStarters,
-                        )));
-                      },
-                      onStartConversation: () { 
-                        print('Start conversation');
-                        ChatMessageModel initMsg = ChatMessageModel(
-                          role: 'system',
-                          content: agent.systemPrompt,
-                        );
-                        ChatModel chat = ChatModel(
-                          uid: "1",
-                          title: "New Chat",
-                          agentId: agent.uid,
-                          userId: userState.user!.uid,
-                          messages: [initMsg],
-                        );
-                        store.dispatch(CreateNewChatAction(chat));
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatScreen(
-                          conversationStarters: agent.conversationStarters,
-                        )));
-                      },
-                    )));
-                  },
-                ),
-          ),
-          const SizedBox(height: 32), // Added space before ListTiles
-          const Divider(color: Color.fromARGB(255, 0, 0, 0), thickness: 1, height: 1, indent: 0, endIndent: 0),
-          const SizedBox(height: 32), // Added space before ListTiles
-
-          const Text('Recent chats', overflow: TextOverflow.ellipsis, maxLines: 1, style: TextStyle(fontSize: 14.0, color: Color.fromARGB(255, 0, 0, 0)),),
-          const SizedBox(height: 24), // Added space before ListTiles
-          // list recent chats below
-          Row(
-                  children: [
-                    Expanded(
-                      child: 
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: filteredData.map((chats) => Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: InkWell(
-                            onTap: () {
-                              store.dispatch(OnSelectChatAction(chats));
-                              // print('chat selected ${userState.currentChat!.title}');
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ChatScreen()));
-                            },
-                            child: Text(chats.title, style: const TextStyle(fontSize: 18.0, color: Color.fromARGB(255, 0, 0, 0)),),
-                          )
-                        )).toList(),
-                    ),
-                    ),
-                  ],
-                ),
-          const SizedBox(height: 32), // Added space before ListTiles
-          const Divider(color: Color.fromARGB(255, 0, 0, 0), thickness: 1, height: 1, indent: 0, endIndent: 0),
-          const SizedBox(height: 32), // Added space before ListTiles
-          ListTile(
-            leading: const Icon(Icons.explore_rounded, color: Color.fromARGB(255, 0, 0, 0), size: 26,),
-            title: const Text(
-              'Explore',
+          padding: EdgeInsets.zero,
+          children: [
+            userState.isFetchingMostRatedAgents
+                ? const Center(child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 0, 0, 0)),
+                    strokeWidth: 2,
+                ))
+                : BubbleCardWrapper(
+                    children: userState.mostRatedAgents.map((agent) {
+                      return AgentBubbleCard(
+                        agent: agent,
+                        onOpenProfile: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => AgentProfile(
+                                agent: agent,
+                                onConversationStart: (String message) {
+                                  print('Start conversation with message: $message');
+                                  String system = getSystemPrompt(agent);
+                                  ChatMessageModel initMsg = ChatMessageModel(
+                                    role: 'system',
+                                    content: system
+                                  );
+                                  ChatModel chat = ChatModel(
+                                    uid: "1",
+                                    title: "New Chat",
+                                    agentId: agent.uid,
+                                    userId: userState.user!.uid,
+                                    messages: [initMsg],
+                                  );
+                                  store.dispatch(CreateNewChatAction(chat));
+                                  store.dispatch(GetAgentByIdAction(agent.uid));
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ChatScreen(
+                                        initialMessage: message,
+                                        conversationStarters: agent.conversationStarters,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                onStartConversation: () {
+                                  print('Start conversation');
+                                  String system = getSystemPrompt(agent);
+                                  ChatMessageModel initMsg = ChatMessageModel(
+                                    role: 'system',
+                                    content: system
+                                  );
+                                  ChatModel chat = ChatModel(
+                                    uid: "1",
+                                    title: "New Chat",
+                                    agentId: agent.uid,
+                                    userId: userState.user!.uid,
+                                    messages: [initMsg],
+                                  );
+                                  store.dispatch(CreateNewChatAction(chat));
+                                  store.dispatch(GetAgentByIdAction(agent.uid));
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ChatScreen(
+                                        conversationStarters: agent.conversationStarters,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }).toList(),
+                  ),
+            const SizedBox(height: 32), // Added space before ListTiles
+            const Divider(
+              color: Color.fromARGB(255, 0, 0, 0),
+              thickness: 1,
+              height: 1,
+              indent: 0,
+              endIndent: 0,
+            ),
+            const SizedBox(height: 32), // Added space before ListTiles
+            const Text(
+              'Recent chats',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
               style: TextStyle(
+                fontSize: 14.0,
                 color: Color.fromARGB(255, 0, 0, 0),
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
               ),
             ),
-            onTap: () {
-              setState(() {
-                _selectedIndex = 0;
-              });
-              Navigator.pop(context);
-            },
-            tileColor: _selectedIndex == 0 ? const Color(0xFFDDDDDD) : null,
-          ),
-          const SizedBox(height: 10), // Added space before ListTiles
-          ListTile(
-            leading: const Icon(Icons.account_circle_outlined, color: Color.fromARGB(255, 0, 0, 0), size: 26,),
-            title: const Text('Profile', 
-              style: TextStyle(
-                color: Color.fromARGB(255, 0, 0, 0), 
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+            const SizedBox(height: 24), // Added space before ListTiles
+            userState.isFetchingUserChats
+                ? const Center(child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 0, 0, 0)),
+                    strokeWidth: 2,
+                ))
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: filteredData.map((chat) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: InkWell(
+                          onTap: () {
+                            store.dispatch(OnSelectChatAction(chat));
+                            store.dispatch(GetAgentByIdAction(chat.agentId));
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const ChatScreen(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            chat.title,
+                            style: const TextStyle(
+                              fontSize: 18.0,
+                              color: Color.fromARGB(255, 0, 0, 0),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+            const SizedBox(height: 32), // Added space before ListTiles
+            const Divider(
+              color: Color.fromARGB(255, 0, 0, 0),
+              thickness: 1,
+              height: 1,
+              indent: 0,
+              endIndent: 0,
             ),
-            onTap: () {
-              setState(() {
-                _selectedIndex = 1;
-              });
-              Navigator.pop(context);
-            },
-            tileColor: _selectedIndex == 1 ? const Color(0xFFDDDDDD) : null,
-          ),
-        ],
-      ),
+            const SizedBox(height: 32), // Added space before ListTiles
+            ListTile(
+              leading: const Icon(
+                Icons.explore_rounded,
+                color: Color.fromARGB(255, 0, 0, 0),
+                size: 26,
+              ),
+              title: const Text(
+                'Explore',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 0, 0, 0),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () {
+                setState(() {
+                  _selectedIndex = 0;
+                });
+                Navigator.pop(context);
+              },
+              tileColor: _selectedIndex == 0 ? const Color(0xFFDDDDDD) : null,
+            ),
+            const SizedBox(height: 10), // Added space before ListTiles
+            ListTile(
+              leading: const Icon(
+                Icons.account_circle_outlined,
+                color: Color.fromARGB(255, 0, 0, 0),
+                size: 26,
+              ),
+              title: const Text(
+                'Profile',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 0, 0, 0),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () {
+                setState(() {
+                  _selectedIndex = 1;
+                });
+                Navigator.pop(context);
+              },
+              tileColor: _selectedIndex == 1 ? const Color(0xFFDDDDDD) : null,
+            ),
+          ],
+        ),
+
       ),
       ),
       ],
@@ -269,14 +334,14 @@ const SizedBox(height: 32), // Added space before ListTiles
       ),
   ),
   
-const SizedBox(height: 32),
+const SizedBox(height: 16),
   const Padding(padding: EdgeInsets.only(bottom: 20.0), // Added padding to version info
   child: 
       Text(
           textAlign: TextAlign.center,
           'version: 0.0.0', // Added app version
           style: TextStyle(
-            color: Colors.white,
+            color: Color.fromARGB(255, 0, 0, 0),
             fontSize: 14,
           ),
         ),

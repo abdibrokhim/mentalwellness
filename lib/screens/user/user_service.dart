@@ -244,5 +244,35 @@ class UserService {
     }
   }
 
+  static Future<AgentModel> getAgentById(String agentId) {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+
+    try {
+      AppLog.log().i('Fetching agent by id');
+
+      return db.collection('agents').doc(agentId).get().then((doc) {
+        if (doc.exists) {
+          Map<String, Object?> agentData = Map<String, Object?>.from(doc.data() as Map);
+
+          agentData['uid'] = doc.id;
+
+          // Convert Timestamp to DateTime
+          if (agentData['createdAt'] is Timestamp) {
+            agentData['createdAt'] = (agentData['createdAt'] as Timestamp).toDate().toString();
+          }
+
+          print('agentData: $agentData');
+
+          return AgentModel.fromJson(agentData);
+        } else {
+          return Future.error('Agent not found');
+        }
+      });
+    } catch (e) {
+      AppLog.log().e('Error while fetching agent by id: $e');
+      return Future.error('Error while fetching agent by id');
+    }
+  }
+
 
 }

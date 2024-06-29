@@ -17,6 +17,7 @@ import 'package:mentalwellness/store/app_logs.dart';
 import 'package:mentalwellness/store/app_store.dart';
 import 'package:mentalwellness/utils/constants.dart';
 import 'package:mentalwellness/utils/refreshable.dart';
+import 'package:mentalwellness/utils/shared.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -117,6 +118,12 @@ Center(
       child: Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 0.0, bottom: 32.0),
         child: 
+        userState.isFetchingAgentsList
+                ? const Center(child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 0, 0, 0)),
+                    strokeWidth: 2,
+                ))
+                : 
         CardWrapper(
           title: 'Featured',
           description: "Tope featured agents for today",
@@ -129,9 +136,10 @@ Center(
                     agent: agent,
                     onConversationStart: (String message) {
                       print('Start conversation with message: $message');
+                      String system = getSystemPrompt(agent);
                       ChatMessageModel initMsg = ChatMessageModel(
                         role: 'system',
-                        content: agent.systemPrompt,
+                        content: system
                       );
                       ChatModel chat = ChatModel(
                         uid: "1",
@@ -141,6 +149,7 @@ Center(
                         messages: [initMsg],
                       );
                       store.dispatch(CreateNewChatAction(chat));
+                      store.dispatch(GetAgentByIdAction(agent.uid));
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatScreen(
                         initialMessage: message,
                         conversationStarters: agent.conversationStarters,
@@ -148,9 +157,10 @@ Center(
                     },
                     onStartConversation: () { 
                       print('Start conversation');
+                      String system = getSystemPrompt(agent);
                       ChatMessageModel initMsg = ChatMessageModel(
                         role: 'system',
-                        content: agent.systemPrompt,
+                        content: system
                       );
                       ChatModel chat = ChatModel(
                         uid: "1",
@@ -160,6 +170,7 @@ Center(
                         messages: [initMsg],
                       );
                       store.dispatch(CreateNewChatAction(chat));
+                      store.dispatch(GetAgentByIdAction(agent.uid));
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatScreen(
                         conversationStarters: agent.conversationStarters,
                       )));

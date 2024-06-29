@@ -69,7 +69,7 @@ Stream<dynamic> createNewChatEpic(Stream<dynamic> actions, EpicStore<GlobalState
 Stream<dynamic> getMostRatedAgentEpic(Stream<dynamic> actions, EpicStore<GlobalState> store) {
   return actions
       .where((action) => action is GetMostRatedAgentAction)
-      .asyncMap((action) => UserService.getMostRatedAgent(action.chat))
+      .asyncMap((action) => UserService.getMostRatedAgent(action.count))
       .flatMap<dynamic>((value) => Stream.fromIterable([
             GetMostRatedAgentSuccessAction(value),
           ]))
@@ -78,6 +78,20 @@ Stream<dynamic> getMostRatedAgentEpic(Stream<dynamic> actions, EpicStore<GlobalS
           ]));
 }
 
+Stream<dynamic> getAgentByIdEpic(Stream<dynamic> actions, EpicStore<GlobalState> store) {
+  return actions
+      .where((action) => action is GetAgentByIdAction)
+      .asyncMap((action) => UserService.getAgentById(action.agentId))
+      .flatMap<dynamic>((value) => Stream.fromIterable([
+            GetAgentByIdSuccessAction(value),
+          ]))
+      .onErrorResume((error, stackTrace) => Stream.fromIterable([
+            HandleGenericErrorAction('an error occurred'),
+          ]));
+}
+
+
+
 
 List<Stream<dynamic> Function(Stream<dynamic>, EpicStore<GlobalState>)> userEffects = [
   fetchAgentsListEpic,
@@ -85,6 +99,7 @@ List<Stream<dynamic> Function(Stream<dynamic>, EpicStore<GlobalState>)> userEffe
   getUserChatsEpic,
   addMessageToChatEpic,
   createNewChatEpic,
-  getMostRatedAgentEpic
+  getMostRatedAgentEpic,
+  getAgentByIdEpic,
 ];
 

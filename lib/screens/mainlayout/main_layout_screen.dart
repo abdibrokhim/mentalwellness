@@ -101,11 +101,8 @@ class _MainLayoutState extends State<MainLayout> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
-                child: TextButton(
-                  style: const ButtonStyle(
-                    enableFeedback: false,
-                  ),
-                  onPressed: () {
+                child: GestureDetector(
+                  onTap: () {
                     Navigator.pop(context);
                     showToast(message: 'This feature is under heavy developmenet', bgColor: getColor(AppColors.info));
                   },
@@ -123,11 +120,8 @@ class _MainLayoutState extends State<MainLayout> {
                 ),
               ),
               Expanded(
-                child: TextButton(
-                                    style: const ButtonStyle(
-                    enableFeedback: false,
-                  ),
-                  onPressed: () {
+                child: GestureDetector(
+                  onTap: () {
                     store.dispatch(DeleteChatByIdAction(chatId));
                     Navigator.pop(context);
                     // delay for 2 seconds
@@ -248,6 +242,7 @@ const SizedBox(height: 32), // Added space before ListTiles
                                   );
                                   store.dispatch(CreateNewChatAction(chat));
                                   store.dispatch(GetAgentByIdAction(agent.uid));
+                                  store.dispatch(UpdateConversationCountAction(agent.uid));
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) => ChatScreen(
@@ -275,6 +270,7 @@ const SizedBox(height: 32), // Added space before ListTiles
                                   );
                                   store.dispatch(CreateNewChatAction(chat));
                                   store.dispatch(GetAgentByIdAction(agent.uid));
+                                  store.dispatch(UpdateConversationCountAction(agent.uid));
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) => ChatScreen(

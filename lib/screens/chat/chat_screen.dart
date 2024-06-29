@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:mentalwellness/agent/search/card.dart';
-import 'package:mentalwellness/screens/chat/custom_chat_input.dart';
+import 'package:mentalwellness/screens/chat/components/custom_chat_input.dart';
+import 'package:mentalwellness/screens/chat/components/rating.dart';
 import 'package:mentalwellness/screens/chat/model/chat.model.dart';
 import 'package:mentalwellness/screens/user/user_reducer.dart';
 import 'package:mentalwellness/store/app_store.dart';
@@ -57,11 +58,8 @@ class _ChatScreenState extends State<ChatScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
-                child: TextButton(
-                  style: ButtonStyle(
-                    enableFeedback: false,
-                  ),
-                  onPressed: () {
+                child: GestureDetector(
+                  onTap: () {
                     Navigator.pop(context);
                     _handleImageSelection();
                   },
@@ -79,11 +77,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
               Expanded(
-                child: TextButton(
-                                    style: ButtonStyle(
-                    enableFeedback: false,
-                  ),
-                  onPressed: () {
+                child: GestureDetector(
+                  onTap: () {
                     Navigator.pop(context);
                     _handleFileSelection();
                   },
@@ -103,7 +98,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ],
           ),
         ),
-      ),
+      )
     );
   }
 
@@ -136,6 +131,62 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller.clear();
   }
 
+  void showOptions(String agentId) {
+    int selectedRating = 0;
+
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (BuildContext context) => SafeArea(
+        child: SizedBox(
+          height: 100,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(
+                child: 
+                StarRating(
+                  onRatingChanged: (rating) {
+                    selectedRating = rating;
+                  },
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    showToast(message: 'This feature is under heavy developmenet', bgColor: getColor(AppColors.info));
+                  },
+                  child:
+                const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.delete_outline_rounded, color: Colors.black),
+                      SizedBox(height: 8.0),
+                      Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ).whenComplete(() {
+      print('Selected rating: $selectedRating');
+      if (selectedRating > 0) {
+        print('Updating rating');
+        Map<int, int> ratingMap = {
+          selectedRating: 1,
+        };
+        store.dispatch(UpdateRatingAction(agentId, ratingMap));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return StoreConnector<GlobalState, UserState>(
@@ -146,6 +197,16 @@ class _ChatScreenState extends State<ChatScreen> {
     Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_vert_rounded),
+            onPressed: () {
+              // Implement more actions
+              print('More actions');
+              showOptions(userState.currentAgent!.uid);
+            },
+          ),
+        ],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),

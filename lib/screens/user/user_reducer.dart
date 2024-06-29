@@ -477,6 +477,51 @@ UserState deleteChatByIdSuccessReducer(UserState state, DeleteChatByIdSuccessAct
   );
 }
 
+// UpdateConversationCountAction
+// UpdateConversationCountSuccessAction
+
+class UpdateConversationCountAction {
+  final String agentId;
+
+  UpdateConversationCountAction(this.agentId);
+}
+
+UserState updateConversationCountReducer(UserState state, UpdateConversationCountAction action) {
+  return state.copyWith();
+}
+
+class UpdateConversationCountSuccessAction {
+  UpdateConversationCountSuccessAction();
+}
+
+UserState updateConversationCountSuccessReducer(UserState state, UpdateConversationCountSuccessAction action) {
+  return state.copyWith();
+}
+
+
+// UpdateRatingAction
+// UpdateRatingSuccessAction
+
+class UpdateRatingAction {
+  final String agentId;
+  final Map<int, int> rating;
+
+  UpdateRatingAction(this.agentId, this.rating);
+}
+
+UserState updateRatingReducer(UserState state, UpdateRatingAction action) {
+  return state.copyWith();
+}
+
+class UpdateRatingSuccessAction {
+  UpdateRatingSuccessAction();
+}
+
+UserState updateRatingSuccessReducer(UserState state, UpdateRatingSuccessAction action) {
+  return state.copyWith();
+}
+
+
 
 
 // ========== simulations ========== //
@@ -544,4 +589,8 @@ Reducer<UserState> userReducer = combineReducers<UserState>([
   TypedReducer<UserState, GetAgentByIdSuccessAction>(getAgentByIdSuccessReducer),
   TypedReducer<UserState, DeleteChatByIdAction>(deleteChatByIdReducer),
   TypedReducer<UserState, DeleteChatByIdSuccessAction>(deleteChatByIdSuccessReducer),
+  TypedReducer<UserState, UpdateConversationCountAction>(updateConversationCountReducer),
+  TypedReducer<UserState, UpdateConversationCountSuccessAction>(updateConversationCountSuccessReducer),
+  TypedReducer<UserState, UpdateRatingAction>(updateRatingReducer),
+  TypedReducer<UserState, UpdateRatingSuccessAction>(updateRatingSuccessReducer),
 ]);

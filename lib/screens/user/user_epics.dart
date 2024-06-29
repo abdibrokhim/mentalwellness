@@ -102,6 +102,30 @@ Stream<dynamic> deleteChatByIdEpic(Stream<dynamic> actions, EpicStore<GlobalStat
           ]));
 }
 
+Stream<dynamic> updateConversationCountEpic(Stream<dynamic> actions, EpicStore<GlobalState> store) {
+  return actions
+      .where((action) => action is UpdateConversationCountAction)
+      .asyncMap((action) => UserService.updateConversationCount(action.agentId))
+      .flatMap<dynamic>((value) => Stream.fromIterable([
+            UpdateConversationCountSuccessAction(),
+          ]))
+      .onErrorResume((error, stackTrace) => Stream.fromIterable([
+            HandleGenericErrorAction('an error occurred'),
+          ]));
+}
+
+Stream<dynamic> updateRatingEpic(Stream<dynamic> actions, EpicStore<GlobalState> store) {
+  return actions
+      .where((action) => action is UpdateRatingAction)
+      .asyncMap((action) => UserService.updateRating(action.agentId, action.rating))
+      .flatMap<dynamic>((value) => Stream.fromIterable([
+            UpdateRatingSuccessAction(),
+          ]))
+      .onErrorResume((error, stackTrace) => Stream.fromIterable([
+            HandleGenericErrorAction('an error occurred'),
+          ]));
+}
+
 
 List<Stream<dynamic> Function(Stream<dynamic>, EpicStore<GlobalState>)> userEffects = [
   fetchAgentsListEpic,
@@ -112,5 +136,7 @@ List<Stream<dynamic> Function(Stream<dynamic>, EpicStore<GlobalState>)> userEffe
   getMostRatedAgentEpic,
   getAgentByIdEpic,
   deleteChatByIdEpic,
+  updateConversationCountEpic,
+  updateRatingEpic,
 ];
 

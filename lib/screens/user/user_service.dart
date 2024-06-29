@@ -359,4 +359,58 @@ static Future<List<AgentModel>> getMostRatedAgent(int count) async {
       return Future.error('Error while deleting chat by id');
     }
   }
+
+  static Future<void> updateConversationCount(String agentId) {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+
+    try {
+      AppLog.log().i('Updating conversation count for agent $agentId');
+
+      DocumentReference agentDocRef = db.collection('agents').doc(agentId);
+
+      return db.runTransaction((transaction) async {
+        DocumentSnapshot snapshot = await transaction.get(agentDocRef);
+
+        if (!snapshot.exists) {
+          throw Exception("Agent does not exist!");
+        }
+
+        int conversationCount = snapshot.get('conversationCount') as int? ?? 0;
+
+        transaction.update(agentDocRef, {'conversationCount': conversationCount + 1});
+      });
+    } catch (e) {
+      AppLog.log().e('Error while updating conversation count: $e');
+      return Future.error('Error while updating conversation count');
+    }
+  }
+
+  static Future<void> updateRating(String agentId, Map<int, int> rating) {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+
+    try {
+      AppLog.log().i('Updating rating for agent $agentId');
+
+      DocumentReference agentDocRef = db.collection('agents').doc(agentId);
+
+      return db.runTransaction((transaction) async {
+        DocumentSnapshot snapshot = await transaction.get(agentDocRef);
+
+        if (!snapshot.exists) {
+          throw Exception("Agent does not exist!");
+        }
+
+        Map<int, int> ratings = snapshot.get('rating') as Map<int, int>? ?? {};
+
+        rating.forEach((key, value) {
+          ratings[key] = ratings[key] as int? ?? 0 + value;
+        });
+
+        transaction.update(agentDocRef, {'rating': ratings});
+      });
+    } catch (e) {
+      AppLog.log().e('Error while updating rating: $e');
+      return Future.error('Error while updating rating');
+    }
+  }
 }

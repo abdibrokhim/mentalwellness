@@ -152,6 +152,7 @@ Center(
                       );
                       store.dispatch(CreateNewChatAction(chat));
                       store.dispatch(GetAgentByIdAction(agent.uid));
+                      store.dispatch(UpdateConversationCountAction(agent.uid));
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatScreen(
                         initialMessage: message,
                         conversationStarters: agent.conversationStarters,
@@ -175,6 +176,7 @@ Center(
                       );
                       store.dispatch(CreateNewChatAction(chat));
                       store.dispatch(GetAgentByIdAction(agent.uid));
+                      store.dispatch(UpdateConversationCountAction(agent.uid));
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatScreen(
                         conversationStarters: agent.conversationStarters,
                       )));

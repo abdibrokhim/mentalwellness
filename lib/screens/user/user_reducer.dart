@@ -25,6 +25,8 @@ class UserState {
   final bool isAddingMessageToChat;
   final ChatModel? currentChat;
   final bool isCreatingNewChat;
+  final List<AgentModel> mostRatedAgents;
+  final bool isFetchingMostRatedAgents;
 
   UserState({
     this.isLoading = false,
@@ -46,6 +48,8 @@ class UserState {
     this.isAddingMessageToChat = false,
     this.currentChat,
     this.isCreatingNewChat = false,
+    this.mostRatedAgents = const [],
+    this.isFetchingMostRatedAgents = false,
   });
 
   UserState copyWith({
@@ -68,6 +72,8 @@ class UserState {
     bool? isAddingMessageToChat,
     ChatModel? currentChat,
     bool? isCreatingNewChat,
+    List<AgentModel>? mostRatedAgents,
+    bool? isFetchingMostRatedAgents,
   }) {
     return UserState(
       isLoading: isLoading ?? this.isLoading,
@@ -89,6 +95,8 @@ class UserState {
       isAddingMessageToChat: isAddingMessageToChat ?? this.isAddingMessageToChat,
       currentChat: currentChat ?? this.currentChat,
       isCreatingNewChat: isCreatingNewChat ?? this.isCreatingNewChat,
+      mostRatedAgents: mostRatedAgents ?? this.mostRatedAgents,
+      isFetchingMostRatedAgents: isFetchingMostRatedAgents ?? this.isFetchingMostRatedAgents,
     );
   }
 }
@@ -376,6 +384,34 @@ UserState createNewChatSuccessReducer(UserState state, CreateNewChatSuccessActio
   );
 }
 
+// get most rated agent
+// GetMostRatedAgentAction
+// GetMostRatedAgentSuccessAction
+
+class GetMostRatedAgentAction {
+  final int count;
+
+  GetMostRatedAgentAction(this.count);
+}
+
+UserState getMostRatedAgentReducer(UserState state, GetMostRatedAgentAction action) {
+  // print('getMostRatedAgentReducer');
+  return state.copyWith(isFetchingMostRatedAgents: true);
+}
+
+class GetMostRatedAgentSuccessAction {
+  final List<AgentModel> agents;
+
+  GetMostRatedAgentSuccessAction(this.agents);
+}
+
+UserState getMostRatedAgentSuccessReducer(UserState state, GetMostRatedAgentSuccessAction action) {
+  return state.copyWith(
+    isFetchingMostRatedAgents: false,
+    mostRatedAgents: action.agents,
+  );
+}
+
 
 
 
@@ -439,5 +475,7 @@ Reducer<UserState> userReducer = combineReducers<UserState>([
   TypedReducer<UserState, OnSelectChatAction>(onSelectChatReducer),
   TypedReducer<UserState, CreateNewChatAction>(createNewChatReducer),
   TypedReducer<UserState, CreateNewChatSuccessAction>(createNewChatSuccessReducer),
+  TypedReducer<UserState, GetMostRatedAgentAction>(getMostRatedAgentReducer),
+  TypedReducer<UserState, GetMostRatedAgentSuccessAction>(getMostRatedAgentSuccessReducer),
 
 ]);

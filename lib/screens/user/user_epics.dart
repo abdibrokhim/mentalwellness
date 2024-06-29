@@ -14,7 +14,7 @@ Stream<dynamic> fetchAgentsListEpic(Stream<dynamic> actions, EpicStore<GlobalSta
             FetchAgentsListSuccessAction(value),
           ]))
       .onErrorResume((error, stackTrace) => Stream.fromIterable([
-            HandleGenericErrorAction('Error while fetching patients'),
+            HandleGenericErrorAction('an error occurred'),
           ]));
 }
 
@@ -26,7 +26,7 @@ Stream<dynamic> gptEpic(Stream<dynamic> actions, EpicStore<GlobalState> store) {
             GetAnswerSuccessAction(value),
           ]))
       .onErrorResume((error, stackTrace) => Stream.fromIterable([
-            HandleGenericErrorAction('Error while fetching patients'),
+            HandleGenericErrorAction('an error occurred'),
           ]));
 }
 
@@ -38,7 +38,7 @@ Stream<dynamic> getUserChatsEpic(Stream<dynamic> actions, EpicStore<GlobalState>
             GetUserChatsSuccessAction(value),
           ]))
       .onErrorResume((error, stackTrace) => Stream.fromIterable([
-            HandleGenericErrorAction('Error while fetching patients'),
+            HandleGenericErrorAction('an error occurred'),
           ]));
 }
 
@@ -50,7 +50,7 @@ Stream<dynamic> addMessageToChatEpic(Stream<dynamic> actions, EpicStore<GlobalSt
             AddMessageToChatSuccessAction(value),
           ]))
       .onErrorResume((error, stackTrace) => Stream.fromIterable([
-            HandleGenericErrorAction('Error while fetching patients'),
+            HandleGenericErrorAction('an error occurred'),
           ]));
 }
 
@@ -62,7 +62,19 @@ Stream<dynamic> createNewChatEpic(Stream<dynamic> actions, EpicStore<GlobalState
             CreateNewChatSuccessAction(value),
           ]))
       .onErrorResume((error, stackTrace) => Stream.fromIterable([
-            HandleGenericErrorAction('Error while fetching patients'),
+            HandleGenericErrorAction('an error occurred'),
+          ]));
+}
+
+Stream<dynamic> getMostRatedAgentEpic(Stream<dynamic> actions, EpicStore<GlobalState> store) {
+  return actions
+      .where((action) => action is GetMostRatedAgentAction)
+      .asyncMap((action) => UserService.getMostRatedAgent(action.chat))
+      .flatMap<dynamic>((value) => Stream.fromIterable([
+            GetMostRatedAgentSuccessAction(value),
+          ]))
+      .onErrorResume((error, stackTrace) => Stream.fromIterable([
+            HandleGenericErrorAction('an error occurred'),
           ]));
 }
 
@@ -73,5 +85,6 @@ List<Stream<dynamic> Function(Stream<dynamic>, EpicStore<GlobalState>)> userEffe
   getUserChatsEpic,
   addMessageToChatEpic,
   createNewChatEpic,
+  getMostRatedAgentEpic
 ];
 

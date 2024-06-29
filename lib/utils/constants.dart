@@ -63,7 +63,7 @@ Color grayColor = Color(0xFFDDDDDD);
 
 
 
-    final AgentModel universalAgent = AgentModel(
+    AgentModel defaultAgent = AgentModel(
                 uid: '1',
                 name: 'John Doe',
                 description: 'A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent A very good agent', 

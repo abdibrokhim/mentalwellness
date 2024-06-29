@@ -209,5 +209,40 @@ class UserService {
     }
   }
 
+  static Future<List<AgentModel>> getMostRatedAgent(int count) {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+
+    try {
+      AppLog.log().i('Fetching most rated agent');
+
+      return db.collection('agents').orderBy('rating', descending: true).limit(count).get().then((querySnapshot) {
+        if (querySnapshot.docs.isNotEmpty) {
+          List<AgentModel> agents = querySnapshot.docs.map((doc) {
+            Map<String, Object?> agentData = Map<String, Object?>.from(doc.data() as Map);
+
+            agentData['uid'] = doc.id;
+
+            // Convert Timestamp to DateTime
+            if (agentData['createdAt'] is Timestamp) {
+              agentData['createdAt'] = (agentData['createdAt'] as Timestamp).toDate().toString();
+            }
+
+            print('most rated agentData: $agentData');
+
+            return AgentModel.fromJson(agentData);
+          }).toList();
+
+          return agents;
+
+        } else {
+          return Future.error('No agents found');
+        }
+      });
+    } catch (e) {
+      AppLog.log().e('Error while fetching most rated agent: $e');
+      return Future.error('Error while fetching most rated agent');
+    }
+  }
+
 
 }

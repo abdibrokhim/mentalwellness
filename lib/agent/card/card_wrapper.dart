@@ -23,7 +23,14 @@ class CardWrapper extends StatelessWidget {
             description: description,
           ),
           const SizedBox(height: 16.0),
-          ...children,
+          ...List.generate(children.length, (index) {
+            return Column(
+              children: [
+                children[index],
+                if (index < children.length - 1) const SizedBox(height: 16.0),
+              ],
+            );
+          }),
         ],
       ),
     );

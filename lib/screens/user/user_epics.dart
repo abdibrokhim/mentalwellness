@@ -90,7 +90,17 @@ Stream<dynamic> getAgentByIdEpic(Stream<dynamic> actions, EpicStore<GlobalState>
           ]));
 }
 
-
+Stream<dynamic> deleteChatByIdEpic(Stream<dynamic> actions, EpicStore<GlobalState> store) {
+  return actions
+      .where((action) => action is DeleteChatByIdAction)
+      .asyncMap((action) => UserService.deleteChatById(action.chatId))
+      .flatMap<dynamic>((value) => Stream.fromIterable([
+            DeleteChatByIdSuccessAction(),
+          ]))
+      .onErrorResume((error, stackTrace) => Stream.fromIterable([
+            HandleGenericErrorAction('an error occurred'),
+          ]));
+}
 
 
 List<Stream<dynamic> Function(Stream<dynamic>, EpicStore<GlobalState>)> userEffects = [
@@ -101,5 +111,6 @@ List<Stream<dynamic> Function(Stream<dynamic>, EpicStore<GlobalState>)> userEffe
   createNewChatEpic,
   getMostRatedAgentEpic,
   getAgentByIdEpic,
+  deleteChatByIdEpic,
 ];
 

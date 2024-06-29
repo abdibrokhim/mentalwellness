@@ -111,7 +111,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _handleImageSelection() {
     // Implement image selection
     print('Image selected');
-    showToast(message: 'This feature is under developmenet', bgColor: getColor(AppColors.info));
+    showToast(message: 'This feature is under heavy developmenet', bgColor: getColor(AppColors.info));
   }
 
   void _handleFileSelection() {
@@ -138,7 +138,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return StoreConnector<GlobalState, UserState>(
+        onInit: (store) async {},
+        converter: (appState) => appState.state.appState.userState,
+        builder: (context, userState) {
+          return
+    Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
@@ -148,7 +153,10 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         systemOverlayStyle: SystemUiOverlayStyle.light,
-        title: AgentBubbleCardSec(
+        title: userState.isFetchingAgentById 
+          ? const Text('Chat')
+          :
+        AgentBubbleCardSec(
           agent: store.state.appState.userState.currentAgent!,
           onOpenProfile: () {
             // we will not open profile because user already came to the chat screen from the agent profile
@@ -156,12 +164,9 @@ class _ChatScreenState extends State<ChatScreen> {
           }
         )
       ),
-      body: StoreConnector<GlobalState, UserState>(
-        onInit: (store) async {},
-        converter: (appState) => appState.state.appState.userState,
-        builder: (context, userState) {
-          return Column(
+      body: Column(
             children: [
+              const SizedBox(height: 8.0),
               if (userState.currentChat?.messages.isEmpty ?? true) ...[
                 if (widget.conversationStarters?.isNotEmpty ?? false)
                   Padding(
@@ -209,12 +214,21 @@ class _ChatScreenState extends State<ChatScreen> {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  !userState.isFetchingAgentById 
+                                    ?
+                                  CircleAvatar(
+                                    backgroundImage: message.role == 'assistant' 
+                                      ? NetworkImage(store.state.appState.userState.currentAgent!.imageUrl)
+                                      : store.state.appState.userState.user!.photoURL != null
+                                        ? NetworkImage(store.state.appState.userState.user!.photoURL!)
+                                        : NetworkImage(defaultProfileImage),
+                                  ) 
+                                    : 
                                   CircleAvatar(
                                     backgroundColor: grayColor,
                                     child: Text(
-                                      message.role == 'assistant'
-                                          ? 'A' 
-                                          : 'U'
+                                      message.role == 'assistant' ? 'A' : 'U',
+                                      style: const TextStyle(color: Colors.black),
                                     ),
                                   ),
                                   const SizedBox(width: 16.0),
@@ -222,14 +236,26 @@ class _ChatScreenState extends State<ChatScreen> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
+                                        !userState.isFetchingAgentById 
+                                          ?
+                                        Text(
+                                          message.role == 'assistant'
+                                            ? store.state.appState.userState.currentAgent!.name
+                                            : store.state.appState.userState.user!.email != null
+                                              ? store.state.appState.userState.user!.email!
+                                              : 'User',
+                                          style: const TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+                                        )
+                                          :
                                         Text(
                                           message.role == 'assistant'
                                               ? 'Agent'
                                               : 'User',
-                                          style: const TextStyle(fontSize: 16.0),
+                                          style: const TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
                                         ),
+                                        const SizedBox(height: 8.0),
                                         MarkdownBody(
-                                          data: message.content,
+                                          data: message.content.replaceAll('â', '\''),
                                           styleSheet: MarkdownStyleSheet(
                                             p: TextStyle(fontSize: 16.0),
                                           ),
@@ -306,9 +332,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ],
-          );
-        },
       ),
+      );
+  },
     );
   }
 }

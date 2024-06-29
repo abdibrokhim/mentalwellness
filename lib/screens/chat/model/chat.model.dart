@@ -40,6 +40,8 @@ class ChatModel {
   final String agentId;
   final List<ChatMessageModel> messages;
   final String title;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   ChatModel({
     required this.uid,
@@ -47,6 +49,8 @@ class ChatModel {
     required this.agentId,
     required this.messages,
     required this.title,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
@@ -56,6 +60,8 @@ class ChatModel {
       agentId: json['agentId'],
       messages: (json['chatMessages'] as List).map((e) => ChatMessageModel.fromJson(e)).toList(),
       title: json['title'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
     );
   }
 
@@ -66,6 +72,8 @@ class ChatModel {
       'agentId': agentId,
       'chatMessages': messages.map((e) => e.toJson()).toList(),
       'title': title,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
     };
   }
 
@@ -75,6 +83,8 @@ class ChatModel {
     String? agentId,
     List<ChatMessageModel>? messages,
     String? title,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return ChatModel(
       uid: uid ?? this.uid,
@@ -82,6 +92,8 @@ class ChatModel {
       agentId: agentId ?? this.agentId,
       messages: messages ?? this.messages,
       title: title ?? this.title,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }

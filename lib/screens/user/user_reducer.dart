@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:mentalwellness/agent/model/agent.model.dart';
 import 'package:mentalwellness/screens/chat/model/chat.model.dart';
 import 'package:redux/redux.dart';
@@ -29,6 +31,7 @@ class UserState {
   final bool isFetchingMostRatedAgents;
   final bool isFetchingAgentById;
   final AgentModel? currentAgent;
+  final bool isDeletingChatById;
 
   UserState({
     this.isLoading = false,
@@ -54,6 +57,7 @@ class UserState {
     this.isFetchingMostRatedAgents = false,
     this.isFetchingAgentById = false,
     this.currentAgent,
+    this.isDeletingChatById = false,
   });
 
   UserState copyWith({
@@ -80,6 +84,7 @@ class UserState {
     bool? isFetchingMostRatedAgents,
     bool? isFetchingAgentById,
     AgentModel? currentAgent,
+    bool? isDeletingChatById,
   }) {
     return UserState(
       isLoading: isLoading ?? this.isLoading,
@@ -105,6 +110,7 @@ class UserState {
       isFetchingMostRatedAgents: isFetchingMostRatedAgents ?? this.isFetchingMostRatedAgents,
       isFetchingAgentById: isFetchingAgentById ?? this.isFetchingAgentById,
       currentAgent: currentAgent ?? this.currentAgent,
+      isDeletingChatById: isDeletingChatById ?? this.isDeletingChatById,
     );
   }
 }
@@ -447,6 +453,30 @@ UserState getAgentByIdSuccessReducer(UserState state, GetAgentByIdSuccessAction 
 }
 
 
+// delete chat by id
+// DeleteChatByIdAction
+// DeleteChatByIdSuccessAction
+
+class DeleteChatByIdAction {
+  final String chatId;
+
+  DeleteChatByIdAction(this.chatId);
+}
+
+UserState deleteChatByIdReducer(UserState state, DeleteChatByIdAction action) {
+  return state.copyWith(isDeletingChatById: true);
+}
+
+class DeleteChatByIdSuccessAction {
+  DeleteChatByIdSuccessAction();
+}
+
+UserState deleteChatByIdSuccessReducer(UserState state, DeleteChatByIdSuccessAction action) {
+  return state.copyWith(
+    isDeletingChatById: false,
+  );
+}
+
 
 
 // ========== simulations ========== //
@@ -512,5 +542,6 @@ Reducer<UserState> userReducer = combineReducers<UserState>([
   TypedReducer<UserState, GetMostRatedAgentSuccessAction>(getMostRatedAgentSuccessReducer),
   TypedReducer<UserState, GetAgentByIdAction>(getAgentByIdReducer),
   TypedReducer<UserState, GetAgentByIdSuccessAction>(getAgentByIdSuccessReducer),
-  
+  TypedReducer<UserState, DeleteChatByIdAction>(deleteChatByIdReducer),
+  TypedReducer<UserState, DeleteChatByIdSuccessAction>(deleteChatByIdSuccessReducer),
 ]);

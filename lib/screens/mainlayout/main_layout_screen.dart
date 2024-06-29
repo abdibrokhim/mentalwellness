@@ -19,6 +19,7 @@ import 'package:mentalwellness/store/app_store.dart';
 import 'package:mentalwellness/utils/constants.dart';
 import 'package:mentalwellness/utils/refreshable.dart';
 import 'package:mentalwellness/utils/shared.dart';
+import 'package:mentalwellness/utils/toast.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 
 class MainLayout extends StatefulWidget {
@@ -87,6 +88,71 @@ class _MainLayoutState extends State<MainLayout> {
         return nameLower.contains(filterLower);
       }).toList();
     });
+  }
+
+  void showOptions(String chatId) {
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (BuildContext context) => SafeArea(
+        child: SizedBox(
+          height: 100,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(
+                child: TextButton(
+                  style: const ButtonStyle(
+                    enableFeedback: false,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    showToast(message: 'This feature is under heavy developmenet', bgColor: getColor(AppColors.info));
+                  },
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.edit_rounded, color: Colors.black),
+                      SizedBox(height: 8.0),
+                      Text(
+                        'Edit',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: TextButton(
+                                    style: const ButtonStyle(
+                    enableFeedback: false,
+                  ),
+                  onPressed: () {
+                    store.dispatch(DeleteChatByIdAction(chatId));
+                    Navigator.pop(context);
+                    // delay for 2 seconds
+                    Future.delayed(const Duration(seconds: 2), () => {
+                      store.dispatch(GetUserChatsAction(store.state.appState.userState.user!.uid)),
+                    });
+                  },
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.delete_outline_rounded, color: Colors.black),
+                      SizedBox(height: 8.0),
+                      Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
 
@@ -172,11 +238,13 @@ const SizedBox(height: 32), // Added space before ListTiles
                                     content: system
                                   );
                                   ChatModel chat = ChatModel(
-                                    uid: "1",
-                                    title: "New Chat",
+                                    uid: "1", // default value, will be updated in services
+                                    title: agent.category.first,
                                     agentId: agent.uid,
                                     userId: userState.user!.uid,
                                     messages: [initMsg],
+                                    createdAt: DateTime.now(),
+                                    updatedAt: DateTime.now(),
                                   );
                                   store.dispatch(CreateNewChatAction(chat));
                                   store.dispatch(GetAgentByIdAction(agent.uid));
@@ -197,11 +265,13 @@ const SizedBox(height: 32), // Added space before ListTiles
                                     content: system
                                   );
                                   ChatModel chat = ChatModel(
-                                    uid: "1",
-                                    title: "New Chat",
+                                    uid: "1", // default value, will be updated in services
+                                    title: agent.category.first,
                                     agentId: agent.uid,
                                     userId: userState.user!.uid,
                                     messages: [initMsg],
+                                    createdAt: DateTime.now(),
+                                    updatedAt: DateTime.now(),
                                   );
                                   store.dispatch(CreateNewChatAction(chat));
                                   store.dispatch(GetAgentByIdAction(agent.uid));
@@ -238,39 +308,47 @@ const SizedBox(height: 32), // Added space before ListTiles
                 color: Color.fromARGB(255, 0, 0, 0),
               ),
             ),
-            const SizedBox(height: 24), // Added space before ListTiles
+            const SizedBox(height: 16), // Added space before ListTiles
             userState.isFetchingUserChats
                 ? const Center(child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 0, 0, 0)),
                     strokeWidth: 2,
                 ))
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: filteredData.map((chat) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: InkWell(
-                          onTap: () {
-                            store.dispatch(OnSelectChatAction(chat));
-                            store.dispatch(GetAgentByIdAction(chat.agentId));
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const ChatScreen(),
+                : LimitedBox(
+                    maxHeight: 250, // Adjust the maxHeight as needed
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: filteredData.length,
+                      itemBuilder: (context, index) {
+                        ChatModel chat = filteredData[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: InkWell(
+                            onLongPress: () {
+                              showOptions(chat.uid);
+                            },
+                            onTap: () {
+                              store.dispatch(OnSelectChatAction(chat));
+                              store.dispatch(GetAgentByIdAction(chat.agentId));
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const ChatScreen(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              chat.title,
+                              style: const TextStyle(
+                                fontSize: 18.0,
+                                color: Color.fromARGB(255, 0, 0, 0),
                               ),
-                            );
-                          },
-                          child: Text(
-                            chat.title,
-                            style: const TextStyle(
-                              fontSize: 18.0,
-                              color: Color.fromARGB(255, 0, 0, 0),
                             ),
                           ),
-                        ),
-                      );
-                    }).toList(),
+                        );
+                      },
+                    ),
                   ),
-            const SizedBox(height: 32), // Added space before ListTiles
+            const SizedBox(height: 16), // Added space before ListTiles
             const Divider(
               color: Color.fromARGB(255, 0, 0, 0),
               thickness: 1,

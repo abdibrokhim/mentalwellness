@@ -142,11 +142,13 @@ Center(
                         content: system
                       );
                       ChatModel chat = ChatModel(
-                        uid: "1",
-                        title: "New Chat",
+                        uid: "1", // default value, will be updated in services
+                        title: agent.category.first,
                         agentId: agent.uid,
                         userId: state.user!.uid,
                         messages: [initMsg],
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now(),
                       );
                       store.dispatch(CreateNewChatAction(chat));
                       store.dispatch(GetAgentByIdAction(agent.uid));
@@ -163,11 +165,13 @@ Center(
                         content: system
                       );
                       ChatModel chat = ChatModel(
-                        uid: "1",
-                        title: "New Chat",
+                        uid: "1", // default value, will be updated in services
+                        title: agent.category.first,
                         agentId: agent.uid,
                         userId: state.user!.uid,
                         messages: [initMsg],
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now(),
                       );
                       store.dispatch(CreateNewChatAction(chat));
                       store.dispatch(GetAgentByIdAction(agent.uid));

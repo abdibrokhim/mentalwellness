@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:mentalwellness/agent/model/agent.model.dart';
+import 'package:mentalwellness/screens/chat/model/chat.model.dart';
 
 
 String formatDate(DateTime date) {
@@ -239,4 +241,24 @@ String getSystemPrompt(AgentModel agent) {
     Keep your responses professional and helpful.
     """;
   return system;
+}
+
+List<ChatMessageModel> getTitlePrompt(List<ChatMessageModel> messages) {
+
+  ChatMessageModel system = ChatMessageModel(
+    role: "system", 
+    content: "Your task is to generate short 3 or 4 word long titles for the given conversation between Agent and User. Messages will be given in the following pattern: [Agent] <agent message> and [User] <user message>. Here is the conversation so far. Generate 4 titles for the conversation. Return the titles in the list format. ['title1', 'title2', 'title3', 'title4']."
+  );
+
+  String formatPrompt = "";
+
+  for (var message in messages) {
+    formatPrompt += "\n[${message.role == 'assistant' ? 'Agent' : 'User'}]\n\"${message.content}\"\n";
+  }
+  List<ChatMessageModel> fullMessage = [
+    system,
+    ChatMessageModel(role: "user", content: formatPrompt)
+  ];
+
+  return fullMessage;
 }

@@ -138,6 +138,20 @@ Stream<dynamic> updateConversationTitleEpic(Stream<dynamic> actions, EpicStore<G
           ]));
 }
 
+Stream<dynamic> generateTitlesEpic(Stream<dynamic> actions, EpicStore<GlobalState> store) {
+  return actions
+      .where((action) => action is GenerateTitlesAction)
+      .asyncMap((action) => UserService.generateTitles(action.messages))
+      .flatMap<dynamic>((value) => Stream.fromIterable([
+            GenerateTitlesSuccessAction(value),
+          ]))
+      .onErrorResume((error, stackTrace) => Stream.fromIterable([
+            HandleGenericErrorAction('an error occurred'),
+          ]));
+}
+
+
+
 
 List<Stream<dynamic> Function(Stream<dynamic>, EpicStore<GlobalState>)> userEffects = [
   fetchAgentsListEpic,
@@ -151,5 +165,6 @@ List<Stream<dynamic> Function(Stream<dynamic>, EpicStore<GlobalState>)> userEffe
   updateConversationCountEpic,
   updateRatingEpic,
   updateConversationTitleEpic,
+  generateTitlesEpic,
 ];
 

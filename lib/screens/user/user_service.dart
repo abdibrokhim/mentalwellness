@@ -265,6 +265,45 @@ class UserService {
     }
   }
 
+  static Future<List<String>> generateTitles(List<ChatMessageModel> messages) async {
+    try {
+      List<Map<String, String>> messageContents = messages.map((msg) {
+        return {
+          'role': msg.role,
+          'content': msg.content,
+        };
+      }).toList();
+
+      final response = await http.post(
+        Uri.parse('${Environments.backendServiceBaseUrl}/api/gpt4o/title'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({'messages': messageContents}),
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic data = json.decode(response.body);
+        print('Generated data: $data');
+
+        if (data is List<dynamic>) {
+          List<String> titles = data.map((title) => title.toString()).toList();
+          print('generateTitles: $titles');
+        return titles;
+        } else {
+          showToast(message: "An error has occured while generating titles", bgColor: getColor(AppColors.error));
+          return Future.error('Failed to generate titles: Invalid response format');
+        }
+      } else {
+        showToast(message: "An error has occured while generating titles", bgColor: getColor(AppColors.error));
+        return Future.error('Failed to generate titles');
+      }
+    } catch (e) {
+      print('Failed to generate titles: $e');
+      showToast(message: "An error has occured while generating titles", bgColor: getColor(AppColors.error));
+      return Future.error('Failed to generate titles');
+    }
+  }
 
 
 
@@ -311,6 +350,7 @@ static Future<List<AgentModel>> getMostRatedAgent(int count) async {
     return topRatedAgents;
   } catch (e) {
     AppLog.log().e('Error while fetching most rated agents: $e');
+    showToast(message: "An error has occured.", bgColor: getColor(AppColors.error));
     return Future.error('Error while fetching most rated agents');
   }
 }
@@ -342,6 +382,7 @@ static Future<List<AgentModel>> getMostRatedAgent(int count) async {
       });
     } catch (e) {
       AppLog.log().e('Error while fetching agent by id: $e');
+      showToast(message: "An error has occured.", bgColor: getColor(AppColors.error));
       return Future.error('Error while fetching agent by id');
     }
   }
@@ -356,6 +397,7 @@ static Future<List<AgentModel>> getMostRatedAgent(int count) async {
       return db.collection('chats').doc(chatId).delete();
     } catch (e) {
       AppLog.log().e('Error while deleting chat by id: $e');
+      showToast(message: 'Error while deleting chat', bgColor: getColor(AppColors.error));
       return Future.error('Error while deleting chat by id');
     }
   }
@@ -385,34 +427,61 @@ static Future<List<AgentModel>> getMostRatedAgent(int count) async {
     }
   }
 
+
   static Future<void> updateRating(String agentId, Map<int, int> rating) {
     final FirebaseFirestore db = FirebaseFirestore.instance;
 
     try {
       AppLog.log().i('Updating rating for agent $agentId');
+      AppLog.log().i('new rating: $rating');
 
       DocumentReference agentDocRef = db.collection('agents').doc(agentId);
 
       return db.runTransaction((transaction) async {
         DocumentSnapshot snapshot = await transaction.get(agentDocRef);
+        print('snapshot: $snapshot');
 
         if (!snapshot.exists) {
           throw Exception("Agent does not exist!");
         }
+        
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        print('agent data: $data');
 
-        Map<int, int> ratings = snapshot.get('rating') as Map<int, int>? ?? {};
+        print('data[\'rating\']: ${data['rating']}');
+        // print type of data['rating']
+        print('type of data[\'rating\']: ${data['rating'].runtimeType}');
 
+        // Convert data['rating'] to Map<int, int>
+        Map<int, int> ratings = (data['rating'] as Map<String, dynamic>).map(
+          (key, value) => MapEntry(int.parse(key), value as int),
+        );
+
+        print('agent ratings: $ratings');
+
+        // Update the ratings
         rating.forEach((key, value) {
-          ratings[key] = ratings[key] as int? ?? 0 + value;
+          ratings[key] = (ratings[key] ?? 0) + value;
         });
 
-        transaction.update(agentDocRef, {'rating': ratings});
+        // Convert ratings back to Map<String, int> for Firestore
+        Map<String, int> updatedRatings = ratings.map(
+          (key, value) => MapEntry(key.toString(), value),
+        );
+
+        print('new ratings: $ratings');
+
+        transaction.update(agentDocRef, {'rating': updatedRatings});
+        print('Rating updated successfully');
+        showToast(message: 'Thank you for rating', bgColor: getColor(AppColors.success));
       });
     } catch (e) {
       AppLog.log().e('Error while updating rating: $e');
+      showToast(message: 'Error while updating rating', bgColor: getColor(AppColors.error));
       return Future.error('Error while updating rating');
     }
   }
+
 
   static Future<void> updateConversationTitle(String chatId, String title) {
     final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -422,9 +491,12 @@ static Future<List<AgentModel>> getMostRatedAgent(int count) async {
 
       DocumentReference chatDocRef = db.collection('chats').doc(chatId);
 
+      showToast(message: 'Chat title updated successfully', bgColor: getColor(AppColors.success));
+
       return chatDocRef.update({'title': title});
     } catch (e) {
       AppLog.log().e('Error while updating conversation title: $e');
+      showToast(message: 'Error while updating conversation title', bgColor: getColor(AppColors.error));
       return Future.error('Error while updating conversation title');
     }
   }

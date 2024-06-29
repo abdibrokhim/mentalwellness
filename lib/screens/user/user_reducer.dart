@@ -32,6 +32,9 @@ class UserState {
   final bool isFetchingAgentById;
   final AgentModel? currentAgent;
   final bool isDeletingChatById;
+  final bool isUpdatingChatTitle;
+  final List<String> genTitles;
+  final bool isGeneratingTitles;
 
   UserState({
     this.isLoading = false,
@@ -58,6 +61,9 @@ class UserState {
     this.isFetchingAgentById = false,
     this.currentAgent,
     this.isDeletingChatById = false,
+    this.isUpdatingChatTitle = false,
+    this.genTitles = const [],
+    this.isGeneratingTitles = false,
   });
 
   UserState copyWith({
@@ -85,6 +91,9 @@ class UserState {
     bool? isFetchingAgentById,
     AgentModel? currentAgent,
     bool? isDeletingChatById,
+    bool? isUpdatingChatTitle,
+    List<String>? genTitles,
+    bool? isGeneratingTitles,
   }) {
     return UserState(
       isLoading: isLoading ?? this.isLoading,
@@ -111,6 +120,9 @@ class UserState {
       isFetchingAgentById: isFetchingAgentById ?? this.isFetchingAgentById,
       currentAgent: currentAgent ?? this.currentAgent,
       isDeletingChatById: isDeletingChatById ?? this.isDeletingChatById,
+      isUpdatingChatTitle: isUpdatingChatTitle ?? this.isUpdatingChatTitle,
+      genTitles: genTitles ?? this.genTitles,
+      isGeneratingTitles: isGeneratingTitles ?? this.isGeneratingTitles,
     );
   }
 }
@@ -532,7 +544,7 @@ class UpdateConversationTitleAction {
 }
 
 UserState updateConversationTitleReducer(UserState state, UpdateConversationTitleAction action) {
-  return state.copyWith();
+  return state.copyWith(isUpdatingChatTitle: true);
 }
 
 class UpdateConversationTitleSuccessAction {
@@ -540,7 +552,33 @@ class UpdateConversationTitleSuccessAction {
 }
 
 UserState updateConversationTitleSuccessReducer(UserState state, UpdateConversationTitleSuccessAction action) {
-  return state.copyWith();
+  return state.copyWith(isUpdatingChatTitle: false);
+}
+
+// GenerateTitlesAction
+// GenerateTitlesSuccessAction
+
+class GenerateTitlesAction {
+  final List<ChatMessageModel> messages;
+
+  GenerateTitlesAction(this.messages);
+}
+
+UserState generateTitlesReducer(UserState state, GenerateTitlesAction action) {
+  return state.copyWith(isGeneratingTitles: true);
+}
+
+class GenerateTitlesSuccessAction {
+  final List<String> titles;
+
+  GenerateTitlesSuccessAction(this.titles);
+}
+
+UserState generateTitlesSuccessReducer(UserState state, GenerateTitlesSuccessAction action) {
+  return state.copyWith(
+    isGeneratingTitles: false,
+    genTitles: action.titles,
+  );
 }
 
 
@@ -615,4 +653,7 @@ Reducer<UserState> userReducer = combineReducers<UserState>([
   TypedReducer<UserState, UpdateRatingSuccessAction>(updateRatingSuccessReducer),
   TypedReducer<UserState, UpdateConversationTitleAction>(updateConversationTitleReducer),
   TypedReducer<UserState, UpdateConversationTitleSuccessAction>(updateConversationTitleSuccessReducer),
+  TypedReducer<UserState, GenerateTitlesAction>(generateTitlesReducer),
+  TypedReducer<UserState, GenerateTitlesSuccessAction>(generateTitlesSuccessReducer),
+
 ]);

@@ -154,8 +154,11 @@ class _ChatScreenState extends State<ChatScreen> {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
+                    store.dispatch(DeleteChatByIdAction(store.state.appState.userState.currentChat!.uid));
                     Navigator.pop(context);
-                    showToast(message: 'This feature is under heavy developmenet', bgColor: getColor(AppColors.info));
+                    Navigator.pop(context);
+                    store.dispatch(GetUserChatsAction(store.state.appState.userState.user!.uid));
+                    // showToast(message: 'This feature is under heavy developmenet', bgColor: getColor(AppColors.info));
                   },
                   child:
                 const Column(

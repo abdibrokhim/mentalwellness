@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:mentalwellness/agent/model/agent.model.dart';
@@ -9,6 +10,7 @@ import 'package:mentalwellness/agent/search/bubble_wrapper.dart';
 import 'package:mentalwellness/agent/search/card.dart';
 import 'package:mentalwellness/agent/search/search_bar.dart';
 import 'package:mentalwellness/components/custom_search.dart';
+import 'package:mentalwellness/screens/auth/signin/signin_screen.dart';
 import 'package:mentalwellness/screens/chat/chat_screen.dart';
 import 'package:mentalwellness/screens/chat/components/custom_chat_input.dart';
 import 'package:mentalwellness/screens/chat/model/chat.model.dart';
@@ -60,6 +62,9 @@ class _MainLayoutState extends State<MainLayout> {
 
       StoreProvider.of<GlobalState>(context).dispatch(GetMostRatedAgentAction(2));
       print('most rated agents ${StoreProvider.of<GlobalState>(context).state.appState.userState.mostRatedAgents.length}');
+      setState(() {
+        filteredData = StoreProvider.of<GlobalState>(context).state.appState.userState.userChats;
+      });
   }
 
   RefreshController _refreshController =
@@ -274,15 +279,150 @@ class _MainLayoutState extends State<MainLayout> {
     );
   }
 
+    void _showFeedbackSheet() {
+
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (BuildContext context) => 
+      SafeArea(
+        key: const Key('feedback'),
+        child: SizedBox(
+          height: 100,
+          child: Padding(
+                padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0, bottom: 0.0),
+                child: Column(
+                  children: [
+            Expanded(child: 
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(
+                child:
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomChatInput(
+                        initialMessage: email,
+                        disable: true,
+                        hintText: "...",
+                        onChanged: (value) {
+                          print('value: $value');
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8.0),
+                    Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10000.0),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4.0,
+                          spreadRadius: 2.0,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.copy_rounded),
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: email));
+                        showToast(message: 'Email copied to clipboard', bgColor: getColor(AppColors.success));
+                        },
+                    ),
+                  ),
+                  ],
+                ),
+                ),
+            ],
+          ),
+          ),
+                  ],
+                ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _shorProfileOptions() {
+
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.white,
+      context: context,
+      builder: (BuildContext context) => SafeArea(
+        child: SizedBox(
+          height: 100,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    // showToast(message: 'This feature is under heavy developmenet', bgColor: getColor(AppColors.info));
+                    _showFeedbackSheet();
+                  },
+                  child:
+                const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.feedback_rounded, color: Colors.black),
+                      SizedBox(height: 8.0),
+                      Text(
+                        'Send feedback',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    store.dispatch(SignOutAction());
+                  },
+                  child:
+                const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.exit_to_app_rounded, color: Colors.black),
+                      SizedBox(height: 8.0),
+                      Text(
+                        'Sign out',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
 
     return StoreConnector<GlobalState, UserState>(
+      onDidChange: (prev, next) {
+    if (!next.isLoggedIn) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SignInScreen()));
+    }
+  },
               onInit: (store) async {
                 print('onInit');
 
                 store.dispatch(GetUserChatsAction(store.state.appState.userState.user!.uid));
+                setState(() {
+                  filteredData = store.state.appState.userState.userChats;
+                });
                
                 store.dispatch(GetMostRatedAgentAction(2));
               },
@@ -301,6 +441,18 @@ class _MainLayoutState extends State<MainLayout> {
             ),
         ),
         backgroundColor: Colors.white,
+        actions: _selectedIndex == 1 
+          ? [
+          IconButton(
+            icon: const Icon(Icons.more_vert_rounded),
+            onPressed: () {
+              // Implement more actions
+              print('More actions');
+              _shorProfileOptions();
+            },
+          ),
+        ] 
+        : []
       ),
       drawer: Drawer(
         clipBehavior: Clip.none,

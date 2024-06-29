@@ -46,6 +46,9 @@ List<AgentModel> filteredData = [];
 
       StoreProvider.of<GlobalState>(context).dispatch(FetchAgentsListAction());
       filteredData = StoreProvider.of<GlobalState>(context).state.appState.userState.agentsList;
+      setState(() {
+        filteredData = StoreProvider.of<GlobalState>(context).state.appState.userState.agentsList;
+      });
   }
 
   RefreshController _refreshController =
@@ -87,7 +90,10 @@ List<AgentModel> filteredData = [];
     StoreConnector<GlobalState, UserState>(
       onInit: (store) async {
         store.dispatch(FetchAgentsListAction());
-        filteredData = store.state.appState.userState.agentsList;
+        setState(() {
+          filteredData = store.state.appState.userState.agentsList;
+          
+        });
       },
       converter: (appState) => appState.state.appState.userState,
       builder: (context, userState) {

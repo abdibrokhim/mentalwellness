@@ -3,7 +3,7 @@ import 'package:mentalwellness/agent/model/agent.model.dart';
 
 String googleIcon = 'assets/Google_Icons-09-128.png';
 
-String defaultProfileImage = 'https://cdn4.iconfinder.com/data/icons/glyphs/24/icons_user-128.png';
+String defaultProfileImage = 'https://iili.io/dFRrrOX.png';
 
 
 enum AppColors {
@@ -81,3 +81,11 @@ Color grayColor = Color(0xFFDDDDDD);
                 skills: ["Relationship building", "Communication skills", "Community engagement"],
                 createdAt: DateTime.now(),
               );
+
+
+List<String> quickInfo = [
+  "1. Changes (e.g., edit chat title, delete chat, etc.) might take up to 4 seconds to reflect.",
+  "2. Make sure you have a stable internet connection.",
+];
+
+String email = "abdibrokhim@gmail.com";

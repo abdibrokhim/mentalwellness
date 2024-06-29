@@ -22,7 +22,7 @@ class UserProfileScreen extends StatefulWidget {
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
 
-    String displayName = 'No name';
+    String displayName = 'abdibrokhim';
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +32,32 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
       final state = StoreProvider.of<GlobalState>(context).state;
 
-          final String photoUrl = defaultProfileImage;
-    final String email = user.email!;
+          String photoUrl = defaultProfileImage;
+    String email = user.email!;
+
+      Future<String> getUserName() async {
+    // call firestore database to get the user name
+    final String uid = FirebaseAuth.instance.currentUser!.uid;
+    
+    final FirebaseDatabase _firebaseDatabase = FirebaseDatabase.instance;
+    DatabaseReference ref = _firebaseDatabase.ref().child('users').child(user.uid);
+    DataSnapshot snapshot = (await ref.once()).snapshot;
+    if (snapshot.value != null) {
+      Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
+      
+      print('data: $data');
+      return data['firstName'] + ' ' + data['lastName'];
+    }
+    
+    return 'abdibrokhim';
+
+  }
 
     void updateValues() {
       setState(() {
         print('Updating values...');
         print('user.photoURL: ${user.photoURL}');
-
+          photoUrl = defaultProfileImage;
       });
     }
 
@@ -70,33 +88,23 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     _refreshController.loadComplete();
   }
 
-  Future<String> getUserName() async {
-    // call firestore database to get the user name
-    final String uid = FirebaseAuth.instance.currentUser!.uid;
-    
-    final FirebaseDatabase _firebaseDatabase = FirebaseDatabase.instance;
-    DatabaseReference ref = _firebaseDatabase.ref().child('users').child(user.uid);
-    DataSnapshot snapshot = (await ref.once()).snapshot;
-    if (snapshot.value != null) {
-      Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
-      
-      print('data: $data');
-      return data['firstName'] + ' ' + data['lastName'];
-    }
-    
-    return 'No name';
-
-  }
 
     return 
 StoreConnector<GlobalState, UserState>(
   onInit: (store) async {
         if (user.displayName != null) {
-          displayName = user.displayName!;
+          setState(() {
+            displayName = user.displayName!;
+          });
         } else {
           final name = await getUserName();
-          displayName = name;
+          setState(() {
+            displayName = name;
+          });
         }
+        setState(() {
+          photoUrl = defaultProfileImage;
+        });
   },
   onDidChange: (prev, next) {
     if (!next.isLoggedIn) {
@@ -160,6 +168,34 @@ StoreConnector<GlobalState, UserState>(
         ),
 
         const SizedBox(height: 32.0),
+        // general note section 
+        Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Quick info',
+                style: TextStyle(
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ...quickInfo.map((text) {
+                return
+              Text(
+                text,
+                maxLines: 2,
+                style: TextStyle(
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              );
+        }).toList(),
+              const SizedBox(height: 32),
+              ],
+            ),
               ],
             ),
         ),

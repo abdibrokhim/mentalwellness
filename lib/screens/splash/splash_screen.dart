@@ -39,11 +39,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme.of(context).canvasColor,
+      color: Colors.white,
       child: Center(
         child: Hero(
           tag: 'LOGO',
-          child: Image.asset('assets/flutter_candies_logo.png', width: 150.0),
+          child: Image.asset('assets/black_circle.png', width: 150.0),
         ),
       ),
     );

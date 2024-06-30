@@ -2,6 +2,7 @@ import 'dart:isolate';
 
 import 'package:mentalwellness/agent/model/agent.model.dart';
 import 'package:mentalwellness/screens/chat/model/chat.model.dart';
+import 'package:mentalwellness/screens/user/model/user.model.dart';
 import 'package:redux/redux.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -35,6 +36,8 @@ class UserState {
   final bool isUpdatingChatTitle;
   final List<String> genTitles;
   final bool isGeneratingTitles;
+  final UserMetaInfo? userMetaInfo;
+  final bool isFetchingUserMetaInfo;
 
   UserState({
     this.isLoading = false,
@@ -64,6 +67,8 @@ class UserState {
     this.isUpdatingChatTitle = false,
     this.genTitles = const [],
     this.isGeneratingTitles = false,
+    this.userMetaInfo,
+    this.isFetchingUserMetaInfo = false,
   });
 
   UserState copyWith({
@@ -94,6 +99,8 @@ class UserState {
     bool? isUpdatingChatTitle,
     List<String>? genTitles,
     bool? isGeneratingTitles,
+    UserMetaInfo? userMetaInfo,
+    bool? isFetchingUserMetaInfo,
   }) {
     return UserState(
       isLoading: isLoading ?? this.isLoading,
@@ -123,6 +130,8 @@ class UserState {
       isUpdatingChatTitle: isUpdatingChatTitle ?? this.isUpdatingChatTitle,
       genTitles: genTitles ?? this.genTitles,
       isGeneratingTitles: isGeneratingTitles ?? this.isGeneratingTitles,
+      userMetaInfo: userMetaInfo ?? this.userMetaInfo,
+      isFetchingUserMetaInfo: isFetchingUserMetaInfo ?? this.isFetchingUserMetaInfo,
     );
   }
 }
@@ -581,6 +590,29 @@ UserState generateTitlesSuccessReducer(UserState state, GenerateTitlesSuccessAct
   );
 }
 
+class GetUserMetaInfoAction {
+  final String userId;
+  
+  GetUserMetaInfoAction(this.userId);
+}
+
+UserState getUserMetaInfoReducer(UserState state, GetUserMetaInfoAction action) {
+  return state.copyWith(isFetchingUserMetaInfo: true);
+}
+
+class GetUserMetaInfoSuccessAction {
+  final UserMetaInfo userMetaInfo;
+  
+  GetUserMetaInfoSuccessAction(this.userMetaInfo);
+}
+
+UserState getUserMetaInfoSuccessReducer(UserState state, GetUserMetaInfoSuccessAction action) {
+  return state.copyWith(
+    isFetchingUserMetaInfo: false,
+    userMetaInfo: action.userMetaInfo,
+  );
+}
+
 
 // ========== simulations ========== //
 
@@ -655,5 +687,7 @@ Reducer<UserState> userReducer = combineReducers<UserState>([
   TypedReducer<UserState, UpdateConversationTitleSuccessAction>(updateConversationTitleSuccessReducer),
   TypedReducer<UserState, GenerateTitlesAction>(generateTitlesReducer),
   TypedReducer<UserState, GenerateTitlesSuccessAction>(generateTitlesSuccessReducer),
+  TypedReducer<UserState, GetUserMetaInfoAction>(getUserMetaInfoReducer),
+  TypedReducer<UserState, GetUserMetaInfoSuccessAction>(getUserMetaInfoSuccessReducer),
 
 ]);

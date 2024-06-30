@@ -150,6 +150,18 @@ Stream<dynamic> generateTitlesEpic(Stream<dynamic> actions, EpicStore<GlobalStat
           ]));
 }
 
+Stream<dynamic> getUserMetaInfoEpic(Stream<dynamic> actions, EpicStore<GlobalState> store) {
+  return actions
+      .where((action) => action is GetUserMetaInfoAction)
+      .asyncMap((action) => UserService.getUserMetaInfo(action.userId))
+      .flatMap<dynamic>((value) => Stream.fromIterable([
+            GetUserMetaInfoSuccessAction(value),
+          ]))
+      .onErrorResume((error, stackTrace) => Stream.fromIterable([
+            HandleGenericErrorAction('an error occurred'),
+          ]));
+}
+
 
 
 
@@ -166,5 +178,6 @@ List<Stream<dynamic> Function(Stream<dynamic>, EpicStore<GlobalState>)> userEffe
   updateRatingEpic,
   updateConversationTitleEpic,
   generateTitlesEpic,
+  getUserMetaInfoEpic,
 ];
 

@@ -82,6 +82,7 @@ Here is the initial version 0.0.0 of **MeWellAI**.
 * Powered by `Google's Flutter`, Build beautiful native apps on iOS and Android from a single codebase. Increasing community of developers and libraries.
 * Made with `Redux`, a library for predictable and maintainable global state management. Centralizing your application's state and logic enables powerful capabilities like undo/redo, state persistence, and much more.
 * API made with `FastAPI`, a modern, fast (high-performance), web framework for building APIs with Python 3.6+ based on standard Python type hints.
+* API deployed on `render.com` using Gunicorn.
 
 What's next? 
 
@@ -93,7 +94,7 @@ I'll make **MeWellAI** next Super App for Mental Wellness.
 
 Below my vision for **MeWellAI 2.0** (drafted).
 
-##  MeWellAI 2.0 🚀
+##  MeWellAI 2.0 🚀 (Roadmap, future implementation and plans)
 ### Features (not final)
 * Improved the flow of the app.
 * Enhanced the user experience.
@@ -148,6 +149,10 @@ Use Flutter's `ValueNotifier` or `ChangeNotifier`: These classes provide a simpl
 - From ads (only mental wellness) that will be smoothly integrated into the different feeds. User will NOT feel like they are watching ads.
 - Subscription model for accessing a broader range of agents.
 - From in-app purchases. We will sell different mental wellness products (e.g., paper print books, relaxation stuff, original music, and etc.).
+
+## API Backend Services ✅
+
+API Backend Services source code is available [here](https://github.com/abdibrokhim/mentalwellness-api/tree/main)
 
 
 ## How to use MeWellAI? 👀 

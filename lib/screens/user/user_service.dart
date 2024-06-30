@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:mentalwellness/agent/model/agent.model.dart';
 import 'package:mentalwellness/screens/chat/model/chat.model.dart';
+import 'package:mentalwellness/screens/user/model/user.model.dart';
 import 'package:mentalwellness/store/app_logs.dart';
 import 'package:mentalwellness/utils/constants.dart';
 import 'package:mentalwellness/utils/env.dart';
@@ -498,6 +499,40 @@ static Future<List<AgentModel>> getMostRatedAgent(int count) async {
       AppLog.log().e('Error while updating conversation title: $e');
       showToast(message: 'Error while updating conversation title', bgColor: getColor(AppColors.error));
       return Future.error('Error while updating conversation title');
+    }
+  }
+
+  static Future<UserMetaInfo> getUserMetaInfo(String userId) {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+
+    try {
+      AppLog.log().i('Fetching user meta info');
+
+      return db.collection('users').doc(userId).get().then((doc) {
+        if (doc.exists) {
+          Map<String, Object?> userData = Map<String, Object?>.from(doc.data() as Map);
+
+          userData['uid'] = doc.id;
+
+          // Convert Timestamp to DateTime
+          if (userData['createdAt'] is Timestamp) {
+            userData['createdAt'] = (userData['createdAt'] as Timestamp).toDate().toString();
+          }
+          if (userData['updatedAt'] is Timestamp) {
+            userData['updatedAt'] = (userData['updatedAt'] as Timestamp).toDate().toString();
+          }
+
+          print('userData: $userData');
+
+          return UserMetaInfo.fromJson(userData);
+        } else {
+          return Future.error('User not found');
+        }
+      });
+    } catch (e) {
+      AppLog.log().e('Error while fetching user meta info: $e');
+      showToast(message: 'Error while fetching user meta info', bgColor: getColor(AppColors.error));
+      return Future.error('Error while fetching user meta info');
     }
   }
 }

@@ -35,7 +35,7 @@ Stream<dynamic> signInWithEmailEpic(Stream<dynamic> actions, EpicStore<GlobalSta
 Stream<dynamic> signUpWithEmailEpic(Stream<dynamic> actions, EpicStore<GlobalState> store) {
   return actions
       .where((action) => action is SignUpAction)
-      .asyncMap((action) => SignUpService.registerOrganization(action.firstName, action.lastName, action.email, action.password))
+      .asyncMap((action) => SignUpService.registerUser(action.firstName, action.lastName, action.email, action.password))
       .flatMap<dynamic>((value) => Stream.fromIterable([
             SignUpResponseAction(value),
           ]),)

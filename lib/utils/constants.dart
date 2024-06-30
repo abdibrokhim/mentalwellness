@@ -3,7 +3,7 @@ import 'package:mentalwellness/agent/model/agent.model.dart';
 
 String googleIcon = 'assets/Google_Icons-09-128.png';
 
-String defaultProfileImage = 'https://iili.io/dFRrrOX.png';
+String defaultProfileImage = 'https://cdn4.iconfinder.com/data/icons/glyphs/24/icons_user-128.png';
 
 
 enum AppColors {

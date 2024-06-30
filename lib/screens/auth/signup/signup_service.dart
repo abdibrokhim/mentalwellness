@@ -9,7 +9,7 @@ import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 class SignUpService {
   static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  static Future<User?> registerOrganization(String firstName, String lastName, String email, String password) async {
+  static Future<User?> registerUser(String firstName, String lastName, String email, String password) async {
     print('Registering user');
 
     try {

@@ -112,10 +112,10 @@ Search bar is located on the very top of the Drawer, before the List of top rate
 User profile is really simple (for now). There are three vertical dots on the top right corner. On click, it will open the bottom sheet with the following options: send feedback and sign out. At the center of the screen, there is a user profile image, name, and email. Below there is a General note that is valid during the app usage. On clicking the burger menu (three horizontal lines) on the top left corner, it will open the Mainlayout screen.
 
 ## What's MeWellAI? 📖
-Check the [README.md]() file for more information about MeWellAI and its features.
+Check the [README.md](https://github.com/abdibrokhim/mentalwellness/blob/main/README.md) file for more information about MeWellAI and its features.
 
 ## New to Flutter? 🙃
-Check the [FLUTTER.md]() file for helpful resources on how to get started with Flutter.
+Check the [FLUTTER.md](https://github.com/abdibrokhim/mentalwellness/blob/main/FLUTTER.md) file for helpful resources on how to get started with Flutter.
 
 ## License 📝
 This project is licensed under the MIT License - see the LICENSE.

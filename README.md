@@ -40,6 +40,10 @@ Users may chat with Agents, connect with them the same as on LinkedIn.
 - Mental wellness is more self-directed, relying on personal agency and self-care practices.
 - Mental wellness takes a salutogenic approach focused on promoting positive human functioning and optimal well-being.
 
+**Resources:**
+- https://www.d-id.com/pricing/api/
+- https://platform.openai.com/docs/overview
+
 Cool! I have a clear vision of the app.
 
 I named it **MeWellAI**. I love minimalism and simplicity. So, I decided to make the app *UI (User Interface)* as simple as possible. And pay more attention to the *UX (User Experience)* to make it predictable and intuitive.
@@ -146,17 +150,11 @@ Use Flutter's `ValueNotifier` or `ChangeNotifier`: These classes provide a simpl
 - From in-app purchases. We will sell different mental wellness products (e.g., paper print books, relaxation stuff, original music, and etc.).
 
 
-### Resource 🔗
-- https://www.d-id.com/pricing/api/
-
-- https://platform.openai.com/docs/overview
-
-
 ## How to use MeWellAI? 👀 
-Check the [INSTRUCTIONS.md]() file for detailed instructions on how to use MeWellAI.
+Check the [INSTRUCTIONS.md](https://github.com/abdibrokhim/mentalwellness/blob/main/INSTRUCTIONS.md) file for detailed instructions on how to use MeWellAI.
 
 ## New to Flutter? 🙃
-Check the [FLUTTER.md]() file for helpful resources on how to get started with Flutter.
+Check the [FLUTTER.md](https://github.com/abdibrokhim/mentalwellness/blob/main/FLUTTER.md) file for helpful resources on how to get started with Flutter.
 
 ## License 📝
 This project is licensed under the MIT License - see the LICENSE.

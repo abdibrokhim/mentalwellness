@@ -150,6 +150,10 @@ Use Flutter's `ValueNotifier` or `ChangeNotifier`: These classes provide a simpl
 - Subscription model for accessing a broader range of agents.
 - From in-app purchases. We will sell different mental wellness products (e.g., paper print books, relaxation stuff, original music, and etc.).
 
+## Download APK 📱
+Download the latest APK from [here](https://docs.google.com/document/d/1n_DkrqzLVZ5X2puMQin_2-ndBldStng2k6wtXxomeDA/edit?usp=sharing)
+I left OpenAI API key intentionally in the code. So, you may test the app. It's just a gift for you. Enjoy!
+
 ## API Backend Services ✅
 
 API Backend Services source code is available [here](https://github.com/abdibrokhim/mentalwellness-api/tree/main)

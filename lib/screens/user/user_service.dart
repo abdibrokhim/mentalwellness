@@ -75,31 +75,80 @@ class UserService {
       }
   }
 
+// i will comment out the following code. I tried to build apk and send request (of course i run backend api) but it failed. 
+// then i tried with firebase functions. however it seems i run into debt, so i just simply make functions to send request directly to gpt-4o in the frontend.
 
-  static Future<String> gpt(List<Map<String, String>> messages) async {
-    try {
-      final response = await http.post(
-        Uri.parse('${Environments.backendServiceBaseUrl}/api/gpt4o'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({'messages': messages}),
-      );
-      if (response.statusCode == 200) {
-        final dynamic data = json.decode(response.body);
-        print('Generated (GPT ): $data');
+  // static Future<String> gpt(List<Map<String, String>> messages) async {
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse('${Environments.backendServiceBaseUrl}/api/gpt4o'),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: json.encode({'messages': messages}),
+  //     );
+  //     if (response.statusCode == 200) {
+  //       final dynamic data = json.decode(response.body);
+  //       print('Generated (GPT ): $data');
 
-        String content = data;
-        return content;
+  //       String content = data;
+  //       return content;
+  //     } else {
+  //       return Future.error('Failed to generate (GPT)');
+  //     }
+  //   } catch (e) {
+  //     showToast(message: 'An error has occured. Please try again later.', bgColor: getColor(AppColors.error));
+  //     AppLog.log().e('Failed to generate (GPT ): $e');
+  //     return Future.error('Failed to generate (GPT )');
+  //   }
+  // }
+
+
+static Future<String> gpt(List<Map<String, String>> messages) async {
+  try {
+
+    final payload = {
+      'model': 'gpt-4o',
+      'messages': messages,
+    };
+
+    final response = await http.post(
+      Uri.parse('https://api.openai.com/v1/chat/completions'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ',
+      },
+      body: json.encode(payload),
+    );
+
+    if (response.statusCode == 200) {
+      final dynamic data = json.decode(response.body);
+      print('Generated (GPT): $data');
+
+      if (data is Map<String, dynamic> && data.containsKey('choices')) {
+        final choices = data['choices'] as List<dynamic>;
+        if (choices.isNotEmpty && choices[0] is Map<String, dynamic>) {
+          final responseText = choices[0]['message']['content'] as String;
+          return responseText;
+        } else {
+          showToast(message: 'An error has occurred. Please try again later.', bgColor: getColor(AppColors.error));
+          return Future.error('Failed to generate (GPT): Invalid response format');
+        }
       } else {
-        return Future.error('Failed to generate (GPT)');
+        showToast(message: 'An error has occurred. Please try again later.', bgColor: getColor(AppColors.error));
+        return Future.error('Failed to generate (GPT): Invalid response format');
       }
-    } catch (e) {
-      showToast(message: 'An error has occured. Please try again later.', bgColor: getColor(AppColors.error));
-      AppLog.log().e('Failed to generate (GPT ): $e');
-      return Future.error('Failed to generate (GPT )');
+    } else {
+      showToast(message: 'An error has occurred. Please try again later.', bgColor: getColor(AppColors.error));
+      return Future.error('Failed to generate (GPT)');
     }
+  } catch (e) {
+    showToast(message: 'An error has occurred. Please try again later.', bgColor: getColor(AppColors.error));
+    print('Failed to generate (GPT): $e');
+    return Future.error('Failed to generate (GPT)');
   }
+}
+
 
 
   static Future<List<ChatModel>> getUserChats(String userId) async {
@@ -266,45 +315,105 @@ class UserService {
     }
   }
 
-  static Future<List<String>> generateTitles(List<ChatMessageModel> messages) async {
-    try {
-      List<Map<String, String>> messageContents = messages.map((msg) {
-        return {
-          'role': msg.role,
-          'content': msg.content,
-        };
-      }).toList();
+// i will comment out the following code. I tried to build apk and send request (of course i run backend api) but it failed. 
+// then i tried with firebase functions. however it seems i run into debt, so i just simply make functions to send request directly to gpt-4o in the frontend.
 
-      final response = await http.post(
-        Uri.parse('${Environments.backendServiceBaseUrl}/api/gpt4o/title'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({'messages': messageContents}),
-      );
+  // static Future<List<String>> generateTitles(List<ChatMessageModel> messages) async {
+  //   try {
+  //     List<Map<String, String>> messageContents = messages.map((msg) {
+  //       return {
+  //         'role': msg.role,
+  //         'content': msg.content,
+  //       };
+  //     }).toList();
 
-      if (response.statusCode == 200) {
-        final dynamic data = json.decode(response.body);
-        print('Generated data: $data');
+  //     final response = await http.post(
+  //       Uri.parse('${Environments.backendServiceBaseUrl}/api/gpt4o/title'),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: json.encode({'messages': messageContents}),
+  //     );
 
-        if (data is List<dynamic>) {
-          List<String> titles = data.map((title) => title.toString()).toList();
+  //     if (response.statusCode == 200) {
+  //       final dynamic data = json.decode(response.body);
+  //       print('Generated data: $data');
+
+  //       if (data is List<dynamic>) {
+  //         List<String> titles = data.map((title) => title.toString()).toList();
+  //         print('generateTitles: $titles');
+  //       return titles;
+  //       } else {
+  //         showToast(message: "An error has occured while generating titles", bgColor: getColor(AppColors.error));
+  //         return Future.error('Failed to generate titles: Invalid response format');
+  //       }
+  //     } else {
+  //       showToast(message: "An error has occured while generating titles", bgColor: getColor(AppColors.error));
+  //       return Future.error('Failed to generate titles');
+  //     }
+  //   } catch (e) {
+  //     print('Failed to generate titles: $e');
+  //     showToast(message: "An error has occured while generating titles", bgColor: getColor(AppColors.error));
+  //     return Future.error('Failed to generate titles');
+  //   }
+  // }
+
+
+static Future<List<String>> generateTitles(List<ChatMessageModel> messages) async {
+  try {
+    List<Map<String, String>> messageContents = messages.map((msg) {
+      return {
+        'role': msg.role,
+        'content': msg.content,
+      };
+    }).toList();
+    final payload = {
+      'model': 'gpt-4o',
+      'messages': messageContents,
+    };
+
+    final response = await http.post(
+      Uri.parse('https://api.openai.com/v1/chat/completions'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ',
+      },
+      body: json.encode(payload),
+    );
+
+    // Handle the response
+    if (response.statusCode == 200) {
+      final dynamic data = json.decode(response.body);
+      print('Generated data: $data');
+
+      if (data is Map<String, dynamic> && data.containsKey('choices')) {
+        final choices = data['choices'] as List<dynamic>;
+        if (choices.isNotEmpty && choices[0] is Map<String, dynamic>) {
+          final responseText = choices[0]['message']['content'] as String;
+          // Assuming the responseText contains JSON list of titles
+          final titlesList = json.decode(responseText.replaceAll("'", '"')) as List<dynamic>;
+          List<String> titles = titlesList.map((title) => title.toString()).toList();
           print('generateTitles: $titles');
-        return titles;
+          return titles;
         } else {
-          showToast(message: "An error has occured while generating titles", bgColor: getColor(AppColors.error));
+          showToast(message: "An error has occurred while generating titles", bgColor: getColor(AppColors.error));
           return Future.error('Failed to generate titles: Invalid response format');
         }
       } else {
-        showToast(message: "An error has occured while generating titles", bgColor: getColor(AppColors.error));
-        return Future.error('Failed to generate titles');
+        showToast(message: "An error has occurred while generating titles", bgColor: getColor(AppColors.error));
+        return Future.error('Failed to generate titles: Invalid response format');
       }
-    } catch (e) {
-      print('Failed to generate titles: $e');
-      showToast(message: "An error has occured while generating titles", bgColor: getColor(AppColors.error));
+    } else {
+      showToast(message: "An error has occurred while generating titles", bgColor: getColor(AppColors.error));
       return Future.error('Failed to generate titles');
     }
+  } catch (e) {
+    print('Failed to generate titles: $e');
+    showToast(message: "An error has occurred while generating titles", bgColor: getColor(AppColors.error));
+    return Future.error('Failed to generate titles');
   }
+}
+
 
 
 

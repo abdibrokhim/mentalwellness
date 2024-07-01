@@ -88,10 +88,12 @@ password: testO1@gmail.com
 
 Or you can create a new account and sign in.
 
+**Note:** If can't sign up, pleas use the above credentials to sign in. Send me message or feedback at [abdibrokhim@gmail.com](mailto:abdibrokhim@gmail.com) if you need any help.
+
 Once you have created an account, you may start exploring MeWellAI features.
 
 ### Sign In or Sign Up
-You may sign in or sign up to MeWellAI using your email and password or Google.
+You may sign in or sign up to MeWellAI using your email and password or Google. When you choose to sign up, pleas write yout first name, last name, email, and password. On click sign up you will be redirecter to sign in screen. Now you may enter your email and password to sign in. Google sign in may not work. I tested it it worked fine for me.
 
 ### Explore and Search Agents
 After signing in, you may start exploring different mental health agents or search for the specific mental health agents. The Explore screen has a Search bar on the top center. And List of agents right below the search bar. Agents are sorted by rating and number of conversations. You may click on any agent to view the agent profile. Usually they will be listed in a separate section below the search bar, for example: Top rated agents for today, Most active agents for today, and etc.

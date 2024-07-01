@@ -127,6 +127,15 @@ Below my vision for **MeWellAI 2.0** (drafted).
 #### Why Redux?
 Use Flutter's `ValueNotifier` or `ChangeNotifier`: These classes provide a simpler way to manage state and can be more efficient than using Redux for small to medium-sized apps. Have you noticed? *small to medium-sized apps*. However, for larger apps, or apps that need to share a lot of state between different parts of the app, `Redux` can be a good choice. *So, I chose Redux for MeWellAI. I'm building a cool and massive mobile application.*
 
+
+As gpt4o has a limited number of token window size. Further to develop we may utilize the following paper: [MemoryBank: Enhancing Large Language Models
+with Long-Term Memory](https://arxiv.org/pdf/2305.10250). Let's see how it goes.
+
+#### And some cool papers (we may utilize in the future versions of MeWellAI 2.0):
+- [SOTOPIA-π: Interactive Learning of Socially Intelligent Language Agent](https://arxiv.org/pdf/2403.08715)
+- [Gorilla: Large Language Model Connected with Massive APIs](https://arxiv.org/pdf/2305.15334)
+
+
 ### How MeWellAI may benefit humanity (YOU)? 💫
 
 **In short:**

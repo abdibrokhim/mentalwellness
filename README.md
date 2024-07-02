@@ -84,6 +84,16 @@ Here is the initial version 0.0.0 of **MeWellAI**.
 * API made with `FastAPI`, a modern, fast (high-performance), web framework for building APIs with Python 3.6+ based on standard Python type hints.
 * API deployed on `render.com` using Gunicorn.
 
+Watch the demo video [here](https://drive.google.com/file/d/1DAx1iQ7vdNffrkcUVz-voJwR6BTfwtDu/view?usp=sharing)
+
+Watch the user testimonial video [here](https://drive.google.com/file/d/18uNsf6cmSdHTaD5XOJtQQeo-YMHSyz39/view?usp=sharing)
+
+Presentation slides are available [here](https://docs.google.com/document/d/1Bxa3vM_s_KPT0P-0AT4_1XwE103lrOqZOw0Napqwd7c/edit?usp=sharing)
+
+Download the latest APK from [here](https://docs.google.com/document/d/1n_DkrqzLVZ5X2puMQin_2-ndBldStng2k6wtXxomeDA/edit?usp=sharing)
+
+App screenshots are available [here](https://drive.google.com/drive/folders/1Undtpc78Xe545hkESVBSBHI45y0km2NT?usp=sharing)
+
 What's next? 
 
 I'm planning to add more and more features and improve the existing ones.

@@ -4,7 +4,7 @@ import 'dart:io';
 
 class WhisperService {
   final String _apiUrl = 'https://api.openai.com/v1/audio/transcriptions';
-  final String _apiKey = 'sk-proj-4l1duJhdr4b8wiIxYJ6oT3BlbkFJXB0UWdTP34QTtwI6Jm8P';
+  final String _apiKey = '';
 
   Future<String> transcribeAudio(File audioFile) async {
     try {

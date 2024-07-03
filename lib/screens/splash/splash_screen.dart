@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
       child: Center(
         child: Hero(
           tag: 'LOGO',
-          child: Image.asset('assets/black_circle.png', width: 150.0),
+          child: Image.asset('assets/black_circle.png', width: 50.0),
         ),
       ),
     );

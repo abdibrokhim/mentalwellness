@@ -2,7 +2,11 @@
 
 Hi, and welcome!
 
-I'm [Ibrohim Abdivokhidov](https://abdibrokhim.vercel.app/about) the Founder of **MeWellAI**.
+I'm Ibrohim Abdivokhidov [LinkedIn](https://abdibrokhim.vercel.app/about) the Founder of **MeWellAI**.
+
+Marjona Rakhmatillaeva [LinkedIn](https://www.linkedin.com/in/marjona-rakhmatillaeva/)
+
+Khabiba Nurullazoda [LinkedIn](https://www.linkedin.com/in/%D1%85%D0%B0%D0%B1%D0%B8%D0%B1%D0%B0-%D0%BD%D1%83%D1%80%D1%83%D0%BB%D0%BB%D0%B0%D0%B7%D0%BE%D0%B4%D0%B0-5406a5226/)
 
 **MeWellAI** is an AI-powered mobile app for Mental Wellness. 
 

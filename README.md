@@ -49,6 +49,8 @@ How did I come up with the idea? [MUST READ!](https://github.com/abdibrokhim/men
 ## External Links
 * Read more about me [click](https://abdibrokhim.vercel.app/about )
 
+* Website [click](https://weshot.my.canva.site/mewellai)
+
 * Watch the user testimonial video [click](https://drive.google.com/file/d/18uNsf6cmSdHTaD5XOJtQQeo-YMHSyz39/view?usp=sharing)
 
 * Here is App screenshots [click](https://drive.google.com/drive/folders/1Undtpc78Xe545hkESVBSBHI45y0km2NT?usp=sharing)
